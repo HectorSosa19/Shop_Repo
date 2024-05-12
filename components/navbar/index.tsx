@@ -9,7 +9,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import React from "react";
-import styles from "@/components/navbar/navbar.module.css";
+import styles from "../navbar/navbar.module.css";
 import Link from "next/link";
 import { CiShoppingTag } from "react-icons/ci";
 import { FaUserAstronaut } from "react-icons/fa";
