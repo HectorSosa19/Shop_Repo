@@ -1,0 +1,39 @@
+.title {
+    font-family: AngerStyle;
+    font-size: 48px;
+}
+
+@font-face {
+    font-family: AngerStyle;
+    src: url(../../fonts/AngerStyles.ttf);
+}
+
+.navbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.listNavBar {
+    display: flex;
+    font-family: AngerStyles;
+}
+
+.sections {
+    margin-left: 50px;
+    margin-top: 20px;
+    font-family: AngerStyle;
+    font-size: 24px;
+    list-style-type: none;
+}
+
+.sections:hover {
+    color: #C0A0E9;
+    cursor: pointer;
+}
+
+.welcome {
+    font-family: AngerStyle;
+    font-size: 70px;
+    text-align: center;
+}
