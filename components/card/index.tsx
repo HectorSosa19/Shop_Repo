@@ -14,7 +14,7 @@ import { TbShoppingBagPlus } from "react-icons/tb";
 import React, { FC } from "react";
 import { CiStar } from "react-icons/ci";
 interface CardInterface {}
-const CardComponent: FC<CardInterface> = () => {
+export const CardComponent: FC<CardInterface> = () => {
   return (
     <>
       <Card

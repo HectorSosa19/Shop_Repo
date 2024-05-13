@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Box, Button, Image, Text } from "@chakra-ui/react";
+import { Box, Button, Image, Link, Text } from "@chakra-ui/react";
 
 const Images = {
   image1: "",
@@ -7,7 +7,7 @@ const Images = {
 };
 
 interface CarouselProps {}
-const Carousel: FC<CarouselProps> = () => {
+export const Carousel: FC<CarouselProps> = () => {
   return (
     <>
       <Box display={"flex"} flexDir={"row"}>
@@ -18,18 +18,20 @@ const Carousel: FC<CarouselProps> = () => {
           alt=""
         />
         <Box right={"80px"} top={"340px"} position={"relative"}>
-          <Button
-            bg={"#161617"}
-            padding={"28px"}
-            position={"absolute"}
-            color={"white"}
-            fontFamily={"AngerStyle"}
-            fontSize={"30px"}
-            borderRadius={"40px"}
-            _hover={{ bg: "purple.900", color: "white" }}
-          >
-            Shop Now
-          </Button>{" "}
+          <Link href="/new">
+            <Button
+              bg={"#161617"}
+              padding={"28px"}
+              position={"absolute"}
+              color={"white"}
+              fontFamily={"AngerStyle"}
+              fontSize={"30px"}
+              borderRadius={"40px"}
+              _hover={{ bg: "purple.900", color: "white" }}
+            >
+              Shop Now
+            </Button>{" "}
+          </Link>
         </Box>
         <Image
           w={"50%"}

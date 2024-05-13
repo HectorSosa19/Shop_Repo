@@ -9,11 +9,12 @@ import {
   Link,
   Text,
 } from "@chakra-ui/react";
-import styles from "../navbar/navbar.module.css";
+import styles from "@/components/navbar/navbar.module.css";
 
 const FooterComponent = () => {
   return (
     <Box
+      bgColor={"#161617"}
       as="footer"
       borderTop="1px solid"
       borderColor="gray.300"

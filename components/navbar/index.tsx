@@ -64,54 +64,62 @@ const NavBar = () => {
           mt={"5px"}
           ml={"200px"}
         >
-          <ListItem
-            px={"20px"}
-            fontWeight={"bold"}
-            _hover={{
-              color: "#C0A0E9",
-              cursor: "pointer",
-              fontWeight: "bold",
-            }}
-            marginTop={"25px"}
-          >
-            NEW
-          </ListItem>
-          <ListItem
-            fontWeight={"bold"}
-            px={"20px"}
-            _hover={{
-              color: "#C0A0E9",
-              cursor: "pointer",
-              fontWeight: "bold",
-            }}
-            marginTop={"25px"}
-          >
-            APPAREL
-          </ListItem>
-          <ListItem
-            fontWeight={"bold"}
-            px={"20px"}
-            _hover={{
-              color: "#C0A0E9",
-              cursor: "pointer",
-              fontWeight: "bold",
-            }}
-            marginTop={"25px"}
-          >
-            SALE
-          </ListItem>
-          <ListItem
-            fontWeight={"bold"}
-            px={"20px"}
-            _hover={{
-              color: "#C0A0E9",
-              cursor: "pointer",
-              fontWeight: "bold",
-            }}
-            marginTop={"25px"}
-          >
-            GIFT
-          </ListItem>
+          <Link href={"/new"}>
+            <ListItem
+              px={"20px"}
+              fontWeight={"bold"}
+              _hover={{
+                color: "#C0A0E9",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+              marginTop={"25px"}
+            >
+              NEW
+            </ListItem>
+          </Link>
+          <Link href={"/aparrel"}>
+            <ListItem
+              fontWeight={"bold"}
+              px={"20px"}
+              _hover={{
+                color: "#C0A0E9",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+              marginTop={"25px"}
+            >
+              APPAREL
+            </ListItem>
+          </Link>
+          <Link href={"/sale"}>
+            <ListItem
+              fontWeight={"bold"}
+              px={"20px"}
+              _hover={{
+                color: "#C0A0E9",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+              marginTop={"25px"}
+            >
+              SALE
+            </ListItem>
+          </Link>
+          <Link href={"/gift"}>
+            <ListItem
+              fontWeight={"bold"}
+              px={"20px"}
+              _hover={{
+                color: "#C0A0E9",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+              marginTop={"25px"}
+            >
+              GIFT
+            </ListItem>
+          </Link>
         </List>
 
         <List>
