@@ -1,91 +1,86 @@
 import {
   Image,
-  ButtonGroup,
+  Button,
   Card,
   CardBody,
   CardFooter,
   Heading,
   Stack,
   Text,
-  IconButton,
   Box,
 } from "@chakra-ui/react";
-import { TbShoppingBagPlus } from "react-icons/tb";
 import React, { FC } from "react";
-import { CiStar } from "react-icons/ci";
-interface CardInterface {}
-export const CardComponent: FC<CardInterface> = () => {
+
+interface CardInterface {
+  title?: string;
+  price?: number;
+  description?: string;
+  image?: string;
+  onClick?: () => void;
+}
+
+export const CardComponent: FC<CardInterface> = ({
+  title = "T-Shirt Overside",
+  price = 400,
+  image = "https://tommydominicana.vtexassets.com/arquivos/ids/287141/T-shirt-con-logo-de-parche-en-el-pecho.jpg?v=638696752994230000",
+}) => {
   return (
     <>
       <Card
-        paddingRight={"10px"}
-        paddingLeft={"10px"}
-        maxW="260px"
-        bgColor={"transparent"}
-        borderWidth={"1px"}
+        paddingX="10px"
+        cursor="pointer"
+        fontWeight="bold"
+        w={"175vh"}
+        maxW={"100%"}
+        display="flex"
+        justifyContent={"center"}
+        border={"0px"}
+        borderWidth={"0px"}
+        boxShadow={"none"}
       >
-        <CardBody>
-          <Stack mt="6" spacing="3">
+        <CardBody display="flex" flexDir="row-reverse" m="auto">
+          <Stack spacing="2">
             <Heading
-              size="md"
-              color={"gray.300"}
-              fontWeight={"light"}
-              fontFamily={"AngerStyles"}
+              fontSize="30px"
+              fontWeight="thin"
+              fontFamily="mono"
+              w="300px"
+              margin="auto"
             >
-              T-Shirt Overside
-            </Heading>
-            <Box
-              display={"flex"}
-              flexDir={"row"}
-              justifyContent={"space-between"}
-              fontFamily={"AngerStyles"}
-            >
-              <Text
-                color="gray.400"
-                fontSize={"2xl"}
-                fontFamily={"AngerStyles"}
+              {title}
+              <Box display="flex" flexDir="row" pt="30px">
+                <Text color="green" fontSize="30px" fontWeight="thin">
+                  USD {price} $
+                </Text>
+              </Box>
+              <Button
+                borderRadius="20px"
+                mt="40px"
+                cursor="pointer"
+                fontWeight={"light"}
+                padding={"20px"}
+                borderWidth={"1px"}
+                bg={"transparent"}
+                _hover={{ color: "green.600" }}
               >
-                DOP
-              </Text>
-              <Text color="gray.400" fontSize="2xl">
-                $450
-              </Text>
-            </Box>
+                Buy
+              </Button>
+            </Heading>
           </Stack>
-          <Box marginTop={"20px"}>
+
+          <Box mt="20px" display="flex" flexDir="row" px="100px">
             <Image
-              src="https://goldenconcept.com/cdn/shop/products/OV_T-Shirt_WHE-01_863x.progressive.jpg?v=1695823693"
+              src={image}
               alt="..."
               borderRadius="10%"
+              margin="auto"
+              w="300px"
+              h="450px"
+              bgColor="transparent"
             />
           </Box>
         </CardBody>
-        <CardFooter>
-          <ButtonGroup spacing="2">
-            <IconButton
-              aria-label="Search database"
-              icon={<TbShoppingBagPlus />}
-              variant={"ghost"}
-              _hover={{
-                bgColor: "transparent",
-                color: "blue.600",
-              }}
-              color={"white"}
-              fontSize={"22px"}
-            />
-            <IconButton
-              aria-label="Search database"
-              icon={<CiStar />}
-              variant={"ghost"}
-              _hover={{
-                bgColor: "transparent",
-                color: "yellow",
-              }}
-              color={"white"}
-              fontSize={"22px"}
-            />
-          </ButtonGroup>
-        </CardFooter>
+        <CardFooter display="flex" justifyContent="space-between" />
       </Card>
     </>
   );

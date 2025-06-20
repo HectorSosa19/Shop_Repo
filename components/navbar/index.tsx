@@ -1,168 +1,141 @@
 import {
-  Box,
-  IconButton,
-  Input,
   InputGroup,
   InputLeftElement,
+  Input,
+  Box,
+  Text,
   List,
   ListItem,
-  Text,
+  IconButton,
 } from "@chakra-ui/react";
 import React from "react";
 import styles from "../navbar/navbar.module.css";
 import Link from "next/link";
-import { CiShoppingTag } from "react-icons/ci";
 import { FaUserAstronaut } from "react-icons/fa";
-import { CiShoppingCart } from "react-icons/ci";
-import { CiSearch } from "react-icons/ci";
+import { CiShoppingCart, CiSearch } from "react-icons/ci";
+import { keyframes } from "@emotion/react";
+
 const NavBar = () => {
+  const marqueeAnimation = keyframes`
+  from { transform: translateX(100%); }
+  to { transform: translateX(-100%); }
+`;
+
   return (
     <>
+      {/* Barra superior con mensaje animado */}
       <Box
-        bg="gray.800"
-        color="white"
-        display={"flex"}
-        flexDir={"row"}
-        justifyContent={"center"}
-        margin={"auto"}
+        bg="#d8d8d8"
+        display="flex"
+        flexDirection="row"
+        justifyContent="center"
+        margin="auto"
+        className="marquee"
       >
-        <Text fontSize={"18px"} fontWeight={"light"}>
+        <Text
+          fontSize="18px"
+          fontWeight="light"
+          color="black"
+          animation={`${marqueeAnimation} 10s linear infinite`}
+        >
           Free Shipping the First Month
         </Text>
-        <Box fontSize={"17px"} mt={"1.5"} ml={"2"}>
-          <CiShoppingTag />
-        </Box>
       </Box>
+
+      {/* Navbar principal */}
       <Box
-        display={"flex"}
-        flexDirection={"row"}
-        justifyContent={"space-around"}
-        bgColor={"#161617"}
-        color={"white"}
-        paddingBottom={"10px"}
-        borderBottom={"1px solid gray"}
-        borderTop={"1px solid gray"}
+        display="flex"
+        flexDirection="row"
+        justifyContent="space-between"
+        alignItems="center"
+        padding="10px 20px"
+        borderBottom="1px solid gray"
+        borderTop="1px solid gray"
+        bgColor="white"
       >
-        <List>
+        {/* Logo */}
+        <Link href="/" passHref>
+          <Text
+            fontSize="48px"
+            className={styles.title}
+            _hover={{ fontWeight: "bold" }}
+            color="black"
+          >
+            Ellie-Jane
+          </Text>
+        </Link>
+
+        {/* Menú de navegación */}
+        <List display="flex" flexDirection="row" gap="20px" alignItems="center">
           <ListItem>
-            <Link href={"/"}>
+            <Link href="/new" passHref>
               <Text
-                fontSize={"48px"}
-                className={styles.title}
-                _hover={{ color: "#C0A0E9" }}
-                mt={"5px"}
+                color="black"
+                fontWeight="thin"
+                _hover={{ cursor: "pointer", fontWeight: "bold" }}
+                fontFamily="mono"
               >
-                Ellie-Jane
+                NEW
+              </Text>
+            </Link>
+          </ListItem>
+          <ListItem>
+            <Link href="/products" passHref>
+              <Text
+                color="black"
+                fontWeight="thin"
+                _hover={{ cursor: "pointer", fontWeight: "bold" }}
+                fontFamily="mono"
+              >
+                ALL-PRODUCTS
+              </Text>
+            </Link>
+          </ListItem>
+          <ListItem>
+            <Link href="/sale" passHref>
+              <Text
+                color="black"
+                fontWeight="thin"
+                _hover={{ cursor: "pointer", fontWeight: "bold" }}
+                fontFamily="mono"
+              >
+                TOP-SELLER
               </Text>
             </Link>
           </ListItem>
         </List>
-        <List
-          display={"flex"}
-          flexDirection={"row"}
-          fontSize={"16px"}
-          mt={"5px"}
-          ml={"200px"}
-        >
-          <Link href={"/new"}>
-            <ListItem
-              px={"20px"}
-              fontWeight={"bold"}
-              _hover={{
-                color: "#C0A0E9",
-                cursor: "pointer",
-                fontWeight: "bold",
-              }}
-              marginTop={"25px"}
-            >
-              NEW
-            </ListItem>
-          </Link>
-          <Link href={"/aparrel"}>
-            <ListItem
-              fontWeight={"bold"}
-              px={"20px"}
-              _hover={{
-                color: "#C0A0E9",
-                cursor: "pointer",
-                fontWeight: "bold",
-              }}
-              marginTop={"25px"}
-            >
-              APPAREL
-            </ListItem>
-          </Link>
-          <Link href={"/sale"}>
-            <ListItem
-              fontWeight={"bold"}
-              px={"20px"}
-              _hover={{
-                color: "#C0A0E9",
-                cursor: "pointer",
-                fontWeight: "bold",
-              }}
-              marginTop={"25px"}
-            >
-              SALE
-            </ListItem>
-          </Link>
-          <Link href={"/gift"}>
-            <ListItem
-              fontWeight={"bold"}
-              px={"20px"}
-              _hover={{
-                color: "#C0A0E9",
-                cursor: "pointer",
-                fontWeight: "bold",
-              }}
-              marginTop={"25px"}
-            >
-              GIFT
-            </ListItem>
-          </Link>
-        </List>
 
-        <List>
-          <ListItem>
-            <Box border={"0"} mt={"20px"} display={"flex"} flexDir={"row"}>
-              <Box mr={"30px"}>
-                <InputGroup>
-                  <InputLeftElement pointerEvents="none">
-                    <Box fontSize={"20px"}>
-                      <CiSearch />
-                    </Box>
-                  </InputLeftElement>
-                  <Input
-                    border={"none"}
-                    borderRadius={"50px"}
-                    placeholder="Looking for Clothes..."
-                  />
-                </InputGroup>
-              </Box>
-              <IconButton
-                h={"30px"}
-                w={"30px"}
-                aria-label=""
-                bg={"transparent"}
-                color={"gray.500"}
-                mt={"6px"}
-                as={FaUserAstronaut}
-                _hover={{ color: "#C0A0E9", cursor: "pointer" }}
-              />
-              <IconButton
-                h={"30px"}
-                w={"30px"}
-                margin={"auto"}
-                aria-label=""
-                mt={"6px"}
-                bg={"transparent"}
-                color={"gray.500"}
-                as={CiShoppingCart}
-                _hover={{ color: "#C0A0E9", cursor: "pointer" }}
-              />
-            </Box>
-          </ListItem>
-        </List>
+        {/* Barra de búsqueda + iconos */}
+        <Box display="flex" alignItems="center" gap="20px">
+          <InputGroup maxW="250px">
+            <InputLeftElement pointerEvents="none">
+              <CiSearch fontSize="20px" color="gray" />
+            </InputLeftElement>
+            <Input
+              borderRadius="50px"
+              placeholder="Looking for Clothes..."
+              _focus={{ borderColor: "black" }}
+            />
+          </InputGroup>
+
+          <Link href="/login" passHref>
+            <IconButton
+              aria-label="User"
+              bg="transparent"
+              color="black"
+              as={FaUserAstronaut}
+              _hover={{ cursor: "pointer" }}
+            />
+          </Link>
+
+          <IconButton
+            aria-label="Cart"
+            bg="transparent"
+            color="black"
+            as={CiShoppingCart}
+            _hover={{ cursor: "pointer" }}
+          />
+        </Box>
       </Box>
     </>
   );

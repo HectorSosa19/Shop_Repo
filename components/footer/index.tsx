@@ -14,7 +14,7 @@ import styles from "@/components/navbar/navbar.module.css";
 const FooterComponent = () => {
   return (
     <Box
-      bgColor={"#161617"}
+      bgColor={"white"}
       as="footer"
       borderTop="1px solid"
       borderColor="gray.300"
@@ -39,8 +39,8 @@ const FooterComponent = () => {
                 <Text
                   fontSize={"38px"}
                   className={styles.title}
-                  color={"white"}
-                  _hover={{ color: "#C0A0E9" }}
+                  color={"black"}
+                  _hover={{ color: "black", fontWeight: "bold" }}
                   mt={"40px"}
                 >
                   Ellie Jane
@@ -55,11 +55,12 @@ const FooterComponent = () => {
             <Flex justifyContent="start" mb="0.5rem" alignItems="baseline">
               <Link href="#" mr="0.5rem">
                 <Box
-                  color={"white"}
+                  color={"black"}
                   fontSize={"15px"}
                   _hover={{
                     borderRadius: "100%",
-                    bg: "gray.700",
+                    bg: "blue",
+                    color: "white",
                   }}
                 >
                   <FaFacebookF />
@@ -67,11 +68,12 @@ const FooterComponent = () => {
               </Link>
               <Link href="#" mr="0.5rem">
                 <Box
-                  color={"white"}
+                  color={"black"}
                   fontSize={"15px"}
                   _hover={{
                     borderRadius: "100%",
-                    bg: "gray.700",
+                    bg: "black",
+                    color: "white",
                   }}
                 >
                   <RiTwitterXLine />
@@ -79,22 +81,21 @@ const FooterComponent = () => {
               </Link>
               <Link href="#" mr="0.5rem">
                 <Box
-                  color={"white"}
+                  color={"black"}
                   fontSize={"15px"}
                   _hover={{
                     borderRadius: "100%",
-                    bg: "gray.700",
+                    bg: "pink.300",
+                    color: "white",
                   }}
                 >
                   <FaInstagram />
                 </Box>
               </Link>
             </Flex>
-            <List lineHeight="2">
-              <LinkItem text="Terms" />
-              <LinkItem text="Privacy" />
-              <LinkItem text="Site Map" />
-            </List>
+            <LinkItem text="Terms" />
+            <LinkItem text="Privacy" />
+            <LinkItem text="Site Map" />
           </Box>
           <Box
             w={{ base: "100%", sm: "50%", md: "max-content" }}
@@ -102,7 +103,7 @@ const FooterComponent = () => {
           >
             <Heading
               as="h5"
-              color="white"
+              color="black"
               mb="0.5rem"
               fontWeight="600"
               fontSize="20px"
@@ -110,12 +111,10 @@ const FooterComponent = () => {
             >
               About us
             </Heading>
-            <List lineHeight="2" justifyContent="center">
-              <LinkItem text="About Ellie Jane" />
-              <LinkItem text="Best Seller" />
-              <LinkItem text="Reviews" />
-              <LinkItem text="Policy" />
-            </List>
+            <LinkItem text="About Ellie Jane" />
+            <LinkItem text="Best Seller" />
+            <LinkItem text="Reviews" />
+            <LinkItem text="Policy" />
           </Box>
           <Box
             w={{ base: "100%", sm: "50%", md: "max-content" }}
@@ -123,7 +122,7 @@ const FooterComponent = () => {
           >
             <Heading
               as="h5"
-              color="white"
+              color="black"
               mb="0.5rem"
               fontWeight="600"
               fontSize="20px"
@@ -143,7 +142,7 @@ const FooterComponent = () => {
           >
             <Heading
               as="h5"
-              color="white"
+              color="black"
               mb="0.5rem"
               fontWeight="600"
               fontSize="20px"
@@ -167,11 +166,11 @@ const FooterComponent = () => {
         </Flex>
       </Box>
       <Flex mx="auto" alignItems="center" px={10} marginLeft={"5%"}>
-        <Text fontFamily={"AngerStyle"} fontSize={"20px"} color={"white"}>
+        <Text fontFamily={"AngerStyle"} fontSize={"20px"} color={"black"}>
           E - J
         </Text>
         <Text color="gray.600" fontSize="0.875rem" pl="0.5rem">
-          &copy; 2024 Back To World, Inc. All rights reserved.
+          &copy; 2025 Back to the world, Inc. All rights reserved.
         </Text>
       </Flex>
     </Box>
@@ -186,33 +185,35 @@ type LinkItemProps = {
 
 const LinkItem = ({ text, isTag = false, tagText }: LinkItemProps) => {
   return (
-    <ListItem display="flex">
-      <Link
-        fontWeight="600"
-        href="#"
-        color="rgba(113, 128, 150, 1)"
-        _hover={{ color: "#C0A0E9" }}
-      >
-        {text}
-      </Link>
-      {isTag && (
-        <Text
-          as="span"
-          bg="#C0A0E9"
-          px="0.25rem"
-          display="inline-flex"
-          alignItems="center"
-          color="#fff"
-          height="1.25rem"
-          borderRadius="0.25rem"
-          ml="0.25rem"
-          mt="0.25rem"
-          fontSize="0.75rem"
+    <List>
+      <ListItem display="flex">
+        <Link
+          fontWeight="600"
+          href="#"
+          color="rgba(113, 128, 150, 1)"
+          _hover={{ color: "black" }}
         >
-          {tagText}
-        </Text>
-      )}
-    </ListItem>
+          {text}
+        </Link>
+        {isTag && (
+          <Text
+            as="span"
+            bg="#C0A0E9"
+            px="0.25rem"
+            display="inline-flex"
+            alignItems="center"
+            color="#fff"
+            height="1.25rem"
+            borderRadius="0.25rem"
+            ml="0.25rem"
+            mt="0.25rem"
+            fontSize="0.75rem"
+          >
+            {tagText}
+          </Text>
+        )}
+      </ListItem>
+    </List>
   );
 };
 
