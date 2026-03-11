@@ -1,36 +1,30 @@
 import { RiTwitterXLine } from "react-icons/ri";
 import { FaFacebookF, FaInstagram } from "react-icons/fa6";
-import {
-  Box,
-  Heading,
-  Flex,
-  List,
-  ListItem,
-  Link,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Flex, List, ListItem, Link, Text } from "@chakra-ui/react";
+import { useTheme } from "@/context/ThemeContext";
 import styles from "@/components/navbar/navbar.module.css";
-
 const FooterComponent = () => {
+  const { palette: p } = useTheme();
+
   return (
     <Box
-      bgColor={"white"}
+      bg={p.bg}
       as="footer"
       borderTop="1px solid"
-      borderColor="gray.300"
+      borderColor={p.border}
       py="2.5rem"
-      margin={"auto"}
+      margin="auto"
       fontSize="0.875rem"
+      fontFamily="mono"
+      transition="all 0.4s"
     >
       <Box
-        w={"100%"}
+        w="100%"
         pb="2rem"
         mb="1.5rem"
         px={28}
-        borderBottom="2px solid"
-        borderColor="gray.300"
-        borderLeft={"2px solid"}
-        borderRight={"2px solid"}
+        borderBottom="1px solid"
+        borderColor={p.border}
       >
         <Flex flexWrap="wrap" alignItems="start" justifyContent="space-between">
           <List>
@@ -39,7 +33,7 @@ const FooterComponent = () => {
                 <Text
                   fontSize={"38px"}
                   className={styles.title}
-                  color={"black"}
+                  color={p.fg}
                   _hover={{ color: "black", fontWeight: "bold" }}
                   mt={"40px"}
                 >
@@ -47,130 +41,142 @@ const FooterComponent = () => {
                 </Text>
               </Link>
             </ListItem>
+            <ListItem mt={4}>
+              <Flex gap={3} alignItems="center">
+                {[
+                  { icon: <FaFacebookF />, href: "#" },
+                  { icon: <RiTwitterXLine />, href: "#" },
+                  { icon: <FaInstagram />, href: "#" },
+                ].map(({ icon, href }, i) => (
+                  <Link key={i} href={href}>
+                    <Box
+                      w="28px"
+                      h="28px"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      borderRadius="full"
+                      border="1px solid"
+                      borderColor={p.border}
+                      color={p.muted}
+                      fontSize="13px"
+                      transition="all 0.2s"
+                      _hover={{ borderColor: p.fg, bg: p.fg, color: p.bg }}
+                    >
+                      {icon}
+                    </Box>
+                  </Link>
+                ))}
+              </Flex>
+            </ListItem>
           </List>
+
           <Box
             w={{ base: "100%", sm: "50%", md: "max-content" }}
             mb={{ base: "1.5rem", lg: "0" }}
           >
-            <Flex justifyContent="start" mb="0.5rem" alignItems="baseline">
-              <Link href="#" mr="0.5rem">
-                <Box
-                  color={"black"}
-                  fontSize={"15px"}
-                  _hover={{
-                    borderRadius: "100%",
-                    bg: "blue",
-                    color: "white",
-                  }}
-                >
-                  <FaFacebookF />
-                </Box>
-              </Link>
-              <Link href="#" mr="0.5rem">
-                <Box
-                  color={"black"}
-                  fontSize={"15px"}
-                  _hover={{
-                    borderRadius: "100%",
-                    bg: "black",
-                    color: "white",
-                  }}
-                >
-                  <RiTwitterXLine />
-                </Box>
-              </Link>
-              <Link href="#" mr="0.5rem">
-                <Box
-                  color={"black"}
-                  fontSize={"15px"}
-                  _hover={{
-                    borderRadius: "100%",
-                    bg: "pink.300",
-                    color: "white",
-                  }}
-                >
-                  <FaInstagram />
-                </Box>
-              </Link>
-            </Flex>
-            <LinkItem text="Terms" />
-            <LinkItem text="Privacy" />
-            <LinkItem text="Site Map" />
+            <Text
+              fontSize="xs"
+              textTransform="uppercase"
+              letterSpacing="widest"
+              color={p.muted}
+              mb={3}
+              fontWeight="bold"
+            >
+              Legal
+            </Text>
+            <LinkItem text="Terms" fg={p.fg} muted={p.muted} />
+            <LinkItem text="Privacy" fg={p.fg} muted={p.muted} />
+            <LinkItem text="Site Map" fg={p.fg} muted={p.muted} />
           </Box>
+
           <Box
             w={{ base: "100%", sm: "50%", md: "max-content" }}
             mb={{ base: "1.5rem", lg: "0" }}
           >
-            <Heading
-              as="h5"
-              color="black"
-              mb="0.5rem"
-              fontWeight="600"
-              fontSize="20px"
-              fontFamily={"AngerStyle"}
+            <Text
+              fontSize="xs"
+              textTransform="uppercase"
+              letterSpacing="widest"
+              color={p.muted}
+              mb={3}
+              fontWeight="bold"
             >
               About us
-            </Heading>
-            <LinkItem text="About Ellie Jane" />
-            <LinkItem text="Best Seller" />
-            <LinkItem text="Reviews" />
-            <LinkItem text="Policy" />
+            </Text>
+            <LinkItem text="About Ellie Jane" fg={p.fg} muted={p.muted} />
+            <LinkItem text="Best Seller" fg={p.fg} muted={p.muted} />
+            <LinkItem text="Reviews" fg={p.fg} muted={p.muted} />
+            <LinkItem text="Policy" fg={p.fg} muted={p.muted} />
           </Box>
+
           <Box
             w={{ base: "100%", sm: "50%", md: "max-content" }}
             mb={{ base: "1.5rem", lg: "0" }}
           >
-            <Heading
-              as="h5"
-              color="black"
-              mb="0.5rem"
-              fontWeight="600"
-              fontSize="20px"
-              fontFamily={"AngerStyle"}
+            <Text
+              fontSize="xs"
+              textTransform="uppercase"
+              letterSpacing="widest"
+              color={p.muted}
+              mb={3}
+              fontWeight="bold"
             >
               Customer Service
-            </Heading>
-            <List lineHeight="2">
-              <LinkItem text="Contact us" />
-              <LinkItem text="Payment &amp; Taxes" />
-              <LinkItem text="FAQ" />
-            </List>
+            </Text>
+            <LinkItem text="Contact us" fg={p.fg} muted={p.muted} />
+            <LinkItem text="Payment & Taxes" fg={p.fg} muted={p.muted} />
+            <LinkItem text="FAQ" fg={p.fg} muted={p.muted} />
           </Box>
+
           <Box
             w={{ base: "100%", sm: "50%", md: "max-content" }}
             mb={{ base: "1.5rem", lg: "0" }}
           >
-            <Heading
-              as="h5"
-              color="black"
-              mb="0.5rem"
-              fontWeight="600"
-              fontSize="20px"
-              fontFamily={"AngerStyle"}
+            <Text
+              fontSize="xs"
+              textTransform="uppercase"
+              letterSpacing="widest"
+              color={p.muted}
+              mb={3}
+              fontWeight="bold"
             >
               Help
-            </Heading>
-            <List lineHeight="2">
-              <LinkItem text="Suscription" />
-              <LinkItem text="Gift Cards" />
-              <LinkItem text="Returns" />
-              <LinkItem text="How to Order" />
-              <LinkItem text="Track your order" />
-            </List>
+            </Text>
+            <LinkItem text="Suscription" fg={p.fg} muted={p.muted} />
+            <LinkItem text="Gift Cards" fg={p.fg} muted={p.muted} />
+            <LinkItem text="Returns" fg={p.fg} muted={p.muted} />
+            <LinkItem text="How to Order" fg={p.fg} muted={p.muted} />
+            <LinkItem text="Track your order" fg={p.fg} muted={p.muted} />
           </Box>
-          <Flex
-            flexWrap="wrap"
-            alignItems="start"
-            justifyContent="space-between"
-          ></Flex>
         </Flex>
       </Box>
-      <Flex mx="auto" alignItems="center" px={10} marginLeft={"5%"}>
-        <Text fontFamily={"AngerStyle"} fontSize={"20px"} color={"black"}>
-          E - J
+
+      <Flex
+        mx="auto"
+        alignItems="center"
+        px={10}
+        marginLeft="5%"
+        justify="space-between"
+        pr={28}
+      >
+        <Text
+          fontFamily={"AngerStyle"}
+          fontSize={"20px"}
+          fontStyle="italic"
+          color={p.fg}
+          transition="color 0.4s"
+        >
+          E — J
         </Text>
-        <Text color="gray.600" fontSize="0.875rem" pl="0.5rem">
-          &copy; 2025 Back to the world, Inc. All rights reserved.
+        <Text
+          color={p.muted}
+          fontSize="0.75rem"
+          fontFamily="mono"
+          letterSpacing="wider"
+          transition="color 0.4s"
+        >
+          © 2025 Ellie-Jane, Inc. All rights reserved.
         </Text>
       </Flex>
     </Box>
@@ -179,39 +185,24 @@ const FooterComponent = () => {
 
 type LinkItemProps = {
   text?: string;
-  isTag?: boolean;
-  tagText?: string;
+  fg: string;
+  muted: string;
 };
 
-const LinkItem = ({ text, isTag = false, tagText }: LinkItemProps) => {
+const LinkItem = ({ text, fg, muted }: LinkItemProps) => {
   return (
     <List>
-      <ListItem display="flex">
+      <ListItem display="flex" lineHeight="2">
         <Link
-          fontWeight="600"
           href="#"
-          color="rgba(113, 128, 150, 1)"
-          _hover={{ color: "black" }}
+          fontSize="sm"
+          fontFamily="mono"
+          color={muted}
+          _hover={{ color: fg }}
+          transition="color 0.2s"
         >
           {text}
         </Link>
-        {isTag && (
-          <Text
-            as="span"
-            bg="#C0A0E9"
-            px="0.25rem"
-            display="inline-flex"
-            alignItems="center"
-            color="#fff"
-            height="1.25rem"
-            borderRadius="0.25rem"
-            ml="0.25rem"
-            mt="0.25rem"
-            fontSize="0.75rem"
-          >
-            {tagText}
-          </Text>
-        )}
       </ListItem>
     </List>
   );

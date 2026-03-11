@@ -1,4 +1,3 @@
-import CardComponent from "@/components/cart";
 import FullModal from "@/components/full-modal";
 import ContentModal, {
   ContentProps,
@@ -28,9 +27,8 @@ const SORT_OPTIONS = [
   { label: "Mejor rating", value: "rating-desc" },
 ];
 
-const NewClothes = () => {
+const WomenClothes = () => {
   const { palette: p } = useTheme();
-
   const [data, setData] = useState<ContentProps[]>([]);
   const [selectedItem, setSelectedItem] = useState<ContentProps | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,7 +39,7 @@ const NewClothes = () => {
 
   useEffect(() => {
     axios
-      .get(`${BASE_URL}products/category/men's clothing`)
+      .get(`${BASE_URL}products/category/women's clothing`)
       .then((resp) => {
         setData(resp.data);
         setLoading(false);
@@ -59,10 +57,7 @@ const NewClothes = () => {
       const price = item.price ?? 0;
       return price >= priceRange[0] && price <= priceRange[1];
     })
-    .filter((item) => {
-      if (!onlyInStock) return true;
-      return (item as any).stock > 0;
-    })
+    .filter((item) => !onlyInStock || (item as any).stock > 0)
     .sort((a, b) => {
       if (sortBy === "price-asc") return (a.price ?? 0) - (b.price ?? 0);
       if (sortBy === "price-desc") return (b.price ?? 0) - (a.price ?? 0);
@@ -92,7 +87,7 @@ const NewClothes = () => {
               fontFamily="mono"
               lineHeight="1"
             >
-              Men's Clothing
+              Women's Clothing
             </Text>
             <Text fontSize="sm" color={p.muted} fontFamily="mono">
               {filteredData.length} productos
@@ -139,9 +134,7 @@ const NewClothes = () => {
                 Limpiar
               </Text>
             </HStack>
-
             <Divider borderColor={p.fg} mb={5} />
-
             <VStack align="flex-start" spacing={6}>
               <Box w="100%">
                 <Text
@@ -182,9 +175,7 @@ const NewClothes = () => {
                   ))}
                 </VStack>
               </Box>
-
               <Divider borderColor={p.border} />
-
               <Box w="100%">
                 <HStack justify="space-between" mb={3}>
                   <Text
@@ -229,9 +220,7 @@ const NewClothes = () => {
                   />
                 </RangeSlider>
               </Box>
-
               <Divider borderColor={p.border} />
-
               <Box w="100%">
                 <Text
                   fontSize="xs"
@@ -364,7 +353,6 @@ const NewClothes = () => {
                         _groupHover={{ transform: "scale(1.05)" }}
                       />
                     </Box>
-
                     <VStack align="flex-start" spacing={1}>
                       <Text
                         fontSize="xs"
@@ -373,7 +361,7 @@ const NewClothes = () => {
                         letterSpacing="wider"
                         noOfLines={1}
                       >
-                        Men's Clothing
+                        Women's Clothing
                       </Text>
                       <Text
                         fontSize="sm"
@@ -410,7 +398,6 @@ const NewClothes = () => {
                         )}
                       </HStack>
                     </VStack>
-
                     <Box
                       className="card-action"
                       position="absolute"
@@ -451,6 +438,7 @@ const NewClothes = () => {
             price={selectedItem.price}
             description={selectedItem.description}
             rating={selectedItem.rating}
+            category="women's clothing"
           />
         </FullModal>
       )}
@@ -458,8 +446,8 @@ const NewClothes = () => {
   );
 };
 
-NewClothes.getLayout = function getLayout(page: ReactElement) {
+WomenClothes.getLayout = function getLayout(page: ReactElement) {
   return <MainLayout>{page}</MainLayout>;
 };
 
-export default NewClothes;
+export default WomenClothes;
