@@ -75,36 +75,43 @@ const ContentModal: React.FC<ContentProps> = ({
     >
       <Box
         w={{ base: "100%", md: "50%" }}
-        position="sticky"
-        top={0}
-        h="100vh"
+        position={{ base: "relative", md: "sticky" }}
+        top={{ base: "unset", md: 0 }}
+        h={{ base: "auto", md: "100vh" }}
         display="flex"
         flexDir="column"
         bg={p.cardBg}
         transition="background 0.4s"
+        pt={{ base: 6, md: 0 }}
       >
         <Box
           flex="1"
           display="flex"
           alignItems="center"
           justifyContent="center"
-          p={10}
+          p={{ base: 6, md: 10 }}
+          h={{ base: "280px", sm: "340px", md: "auto" }}
         >
           <Image
             src={thumbnails[activeThumb]}
-            w="50%"
+            w={{ base: "60%", md: "50%" }}
             h="100%"
             objectFit="contain"
             transition="opacity 0.3s ease"
           />
         </Box>
 
-        <HStack spacing={3} px={8} pb={6} justify="center">
+        <HStack
+          spacing={{ base: 2, md: 3 }}
+          px={{ base: 4, md: 8 }}
+          pb={{ base: 4, md: 6 }}
+          justify="center"
+        >
           {thumbnails.map((thumb, i) => (
             <Box
               key={i}
-              w="70px"
-              h="70px"
+              w={{ base: "52px", md: "70px" }}
+              h={{ base: "52px", md: "70px" }}
               cursor="pointer"
               onClick={() => setActiveThumb(i)}
               border="2px solid"
@@ -126,12 +133,12 @@ const ContentModal: React.FC<ContentProps> = ({
       <Box
         w={{ base: "100%", md: "50%" }}
         overflowY="auto"
-        px={{ base: 6, md: 12 }}
-        py={14}
+        px={{ base: 4, sm: 6, md: 12 }}
+        py={{ base: 6, md: 14 }}
         bg={p.bg}
         transition="background 0.4s"
       >
-        <VStack align="flex-start" spacing={5}>
+        <VStack align="flex-start" spacing={{ base: 4, md: 5 }}>
           <Badge
             bg={p.fg}
             color={p.bg}
@@ -147,7 +154,7 @@ const ContentModal: React.FC<ContentProps> = ({
 
           <Text
             fontFamily="mono"
-            fontSize={{ base: "2xl", md: "3xl" }}
+            fontSize={{ base: "xl", sm: "2xl", md: "3xl" }}
             fontWeight="bold"
             color={p.fg}
             lineHeight="1.2"
@@ -156,13 +163,13 @@ const ContentModal: React.FC<ContentProps> = ({
           </Text>
 
           <VStack align="flex-start" spacing={1}>
-            <HStack spacing={1}>
+            <HStack spacing={1} flexWrap="wrap">
               {Array(5)
                 .fill("")
                 .map((_, i) => (
                   <Text
                     key={i}
-                    fontSize="22px"
+                    fontSize={{ base: "18px", md: "22px" }}
                     lineHeight="1"
                     cursor="pointer"
                     color={i < displayRating ? "yellow.400" : p.border}
@@ -176,7 +183,12 @@ const ContentModal: React.FC<ContentProps> = ({
                     ★
                   </Text>
                 ))}
-              <Text fontSize="sm" color={p.muted} ml={2} fontFamily="mono">
+              <Text
+                fontSize={{ base: "xs", md: "sm" }}
+                color={p.muted}
+                ml={2}
+                fontFamily="mono"
+              >
                 {userRating}/5 ({rating?.count} reseñas)
               </Text>
             </HStack>
@@ -194,19 +206,20 @@ const ContentModal: React.FC<ContentProps> = ({
           <Divider borderColor={p.border} />
 
           <Text
-            fontSize="sm"
+            fontSize={{ base: "xs", md: "sm" }}
             fontFamily="mono"
             color={p.muted}
             lineHeight="1.8"
+            noOfLines={{ base: 4, md: undefined }}
           >
             {description}
           </Text>
 
           <Divider borderColor={p.border} />
 
-          <HStack spacing={4} align="baseline">
+          <HStack spacing={{ base: 2, md: 4 }} align="baseline" flexWrap="wrap">
             <Text
-              fontSize="3xl"
+              fontSize={{ base: "2xl", md: "3xl" }}
               fontWeight="extrabold"
               color={p.fg}
               fontFamily="mono"
@@ -214,7 +227,7 @@ const ContentModal: React.FC<ContentProps> = ({
               USD {price?.toFixed(2)}
             </Text>
             <Text
-              fontSize="md"
+              fontSize={{ base: "sm", md: "md" }}
               color={p.muted}
               textDecor="line-through"
               fontFamily="mono"
@@ -315,7 +328,7 @@ const ContentModal: React.FC<ContentProps> = ({
             border="1px solid"
             borderColor={p.border}
             borderRadius="md"
-            p={4}
+            p={{ base: 3, md: 4 }}
             justify="space-between"
             align="center"
           >
@@ -330,7 +343,7 @@ const ContentModal: React.FC<ContentProps> = ({
                 Total a pagar
               </Text>
               <Text
-                fontSize="2xl"
+                fontSize={{ base: "xl", md: "2xl" }}
                 fontWeight="extrabold"
                 color={p.fg}
                 fontFamily="mono"
@@ -346,15 +359,15 @@ const ContentModal: React.FC<ContentProps> = ({
           <VStack w="100%" spacing={3}>
             <Button
               w="100%"
-              size="lg"
+              size={{ base: "md", md: "lg" }}
               bg={p.fg}
               color={p.bg}
               borderRadius="sm"
-              fontSize="sm"
+              fontSize={{ base: "xs", md: "sm" }}
               fontFamily="mono"
               fontWeight="bold"
               letterSpacing="wider"
-              py={6}
+              py={{ base: 5, md: 6 }}
               onClick={handlePay}
               _hover={{
                 opacity: 0.85,
@@ -368,16 +381,16 @@ const ContentModal: React.FC<ContentProps> = ({
 
             <Button
               w="100%"
-              size="lg"
+              size={{ base: "md", md: "lg" }}
               variant="outline"
               borderColor={p.fg}
               color={p.fg}
               borderRadius="sm"
-              fontSize="sm"
+              fontSize={{ base: "xs", md: "sm" }}
               fontFamily="mono"
               fontWeight="bold"
               letterSpacing="wider"
-              py={6}
+              py={{ base: 5, md: 6 }}
               onClick={handleAddToCart}
               isLoading={addedToCart}
               loadingText="¡Agregado! ✓"
@@ -387,6 +400,29 @@ const ContentModal: React.FC<ContentProps> = ({
               AGREGAR AL CARRITO
             </Button>
           </VStack>
+
+          <HStack
+            spacing={{ base: 4, md: 8 }}
+            pt={2}
+            w="100%"
+            justify="center"
+            color={p.muted}
+            fontFamily="mono"
+            flexWrap="wrap"
+          >
+            {[].map(({ icon, label }) => (
+              <VStack key={label} spacing={0}>
+                <Text fontSize={{ base: "md", md: "lg" }}>{icon}</Text>
+                <Text
+                  fontSize="9px"
+                  textTransform="uppercase"
+                  letterSpacing="wider"
+                >
+                  {label}
+                </Text>
+              </VStack>
+            ))}
+          </HStack>
         </VStack>
       </Box>
     </Box>
