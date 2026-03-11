@@ -10,7 +10,6 @@ import {
 } from "@chakra-ui/react";
 import React, { ReactElement, useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
-import { useRouter } from "next/router";
 import Link from "next/link";
 
 const STEPS = [
@@ -28,7 +27,6 @@ const Cart = () => {
     clearCart,
     cartTotal,
   } = useTheme();
-  const router = useRouter();
   const [step, setStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   const [cardData, setCardData] = useState({
@@ -46,7 +44,6 @@ const Cart = () => {
       .slice(0, 16)
       .replace(/(.{4})/g, "$1 ")
       .trim();
-
   const formatExpiry = (val: string) => {
     const clean = val.replace(/\D/g, "").slice(0, 4);
     if (clean.length >= 3) return clean.slice(0, 2) + "/" + clean.slice(2);
@@ -62,10 +59,30 @@ const Cart = () => {
     }, 2200);
   };
 
+  const inputProps = {
+    fontFamily: "mono",
+    fontSize: "sm",
+    bg: "transparent",
+    border: "1px solid",
+    borderColor: p.border,
+    color: p.fg,
+    borderRadius: "sm",
+    h: "48px",
+    px: 4,
+    _placeholder: { color: p.muted },
+    _focus: { borderColor: p.fg, boxShadow: "none" },
+    _hover: { borderColor: p.fg },
+    transition: "all 0.2s",
+  };
+
   return (
     <Box minH="100vh" bg={p.bg} fontFamily="mono" transition="all 0.4s">
-      <Box px={{ base: 6, md: 16 }} pt={14} pb={8}>
-        <HStack justify="space-between" align="flex-end" mb={8}>
+      <Box
+        px={{ base: 4, md: 8, lg: 16 }}
+        pt={{ base: 8, md: 14 }}
+        pb={{ base: 4, md: 8 }}
+      >
+        <HStack justify="space-between" align="flex-end" mb={6}>
           <Box>
             <Text
               fontSize="xs"
@@ -81,7 +98,7 @@ const Cart = () => {
                   : "Pedido completado"}
             </Text>
             <Text
-              fontSize={{ base: "3xl", md: "5xl" }}
+              fontSize={{ base: "2xl", md: "4xl", lg: "5xl" }}
               fontWeight="extrabold"
               color={p.fg}
               lineHeight="1"
@@ -101,7 +118,7 @@ const Cart = () => {
               transition="color 0.2s"
               onClick={clearCart}
             >
-              Vaciar carrito
+              Vaciar
             </Text>
           )}
         </HStack>
@@ -110,13 +127,13 @@ const Cart = () => {
           {STEPS.map((s, i) => (
             <React.Fragment key={s.id}>
               <HStack
-                spacing={2}
+                spacing={{ base: 1, md: 2 }}
                 cursor={s.id < step ? "pointer" : "default"}
                 onClick={() => s.id < step && setStep(s.id)}
               >
                 <Box
-                  w="28px"
-                  h="28px"
+                  w={{ base: "22px", md: "28px" }}
+                  h={{ base: "22px", md: "28px" }}
                   borderRadius="full"
                   border="1.5px solid"
                   borderColor={step >= s.id ? p.fg : p.border}
@@ -128,12 +145,12 @@ const Cart = () => {
                   flexShrink={0}
                 >
                   {step > s.id ? (
-                    <Text fontSize="10px" color={p.bg} fontWeight="bold">
+                    <Text fontSize="9px" color={p.bg} fontWeight="bold">
                       ✓
                     </Text>
                   ) : (
                     <Text
-                      fontSize="10px"
+                      fontSize="9px"
                       color={step === s.id ? p.fg : p.muted}
                       fontWeight="bold"
                     >
@@ -142,12 +159,16 @@ const Cart = () => {
                   )}
                 </Box>
                 <Text
-                  fontSize="10px"
+                  fontSize={{ base: "8px", md: "10px" }}
                   textTransform="uppercase"
                   letterSpacing="widest"
                   color={step >= s.id ? p.fg : p.muted}
                   fontWeight={step === s.id ? "bold" : "normal"}
                   transition="color 0.3s"
+                  display={{
+                    base: step === s.id ? "block" : "none",
+                    sm: "block",
+                  }}
                 >
                   {s.label}
                 </Text>
@@ -157,14 +178,13 @@ const Cart = () => {
                   flex="1"
                   h="1px"
                   bg={step > s.id ? p.fg : p.border}
-                  mx={3}
+                  mx={{ base: 1, md: 3 }}
                   transition="background 0.3s"
                 />
               )}
             </React.Fragment>
           ))}
         </HStack>
-
         <Divider borderColor={p.fg} borderWidth="1px" />
       </Box>
 
@@ -176,12 +196,16 @@ const Cart = () => {
               flexDir="column"
               alignItems="center"
               justifyContent="center"
-              py={32}
+              py={{ base: 16, md: 32 }}
               gap={6}
               px={6}
               textAlign="center"
             >
-              <Text fontSize="80px" lineHeight="1" userSelect="none">
+              <Text
+                fontSize={{ base: "60px", md: "80px" }}
+                lineHeight="1"
+                userSelect="none"
+              >
                 🛒
               </Text>
               <Box>
@@ -220,28 +244,28 @@ const Cart = () => {
             </Box>
           ) : (
             <Box
-              px={{ base: 6, md: 16 }}
+              px={{ base: 4, md: 8, lg: 16 }}
               pb={20}
               display="flex"
-              gap={12}
+              gap={{ base: 0, lg: 12 }}
               alignItems="flex-start"
               flexDir={{ base: "column", lg: "row" }}
             >
-              <Box flex="1">
+              <Box flex="1" w="100%">
                 {cart.map((item) => (
                   <Box key={item.title}>
                     <Box
-                      py={6}
+                      py={{ base: 4, md: 6 }}
                       display="flex"
-                      gap={6}
+                      gap={{ base: 3, md: 6 }}
                       alignItems="center"
                       role="group"
                       transition="all 0.2s"
                       _hover={{ bg: p.cardBg, px: 3, mx: -3 }}
                     >
                       <Box
-                        w="90px"
-                        h="90px"
+                        w={{ base: "64px", md: "90px" }}
+                        h={{ base: "64px", md: "90px" }}
                         flexShrink={0}
                         bg={p.cardBg}
                         border="1px solid"
@@ -267,7 +291,7 @@ const Cart = () => {
                       </Box>
                       <Box flex="1" minW={0}>
                         <Text
-                          fontSize="xs"
+                          fontSize={{ base: "9px", md: "xs" }}
                           color={p.muted}
                           textTransform="uppercase"
                           letterSpacing="wider"
@@ -276,16 +300,20 @@ const Cart = () => {
                           {(item as any).category ?? "Producto"}
                         </Text>
                         <Text
-                          fontSize="sm"
+                          fontSize={{ base: "xs", md: "sm" }}
                           fontWeight="bold"
                           color={p.fg}
                           noOfLines={2}
                           lineHeight="1.4"
-                          mb={2}
+                          mb={1}
                         >
                           {item.title}
                         </Text>
-                        <Text fontSize="xs" color={p.muted}>
+                        <Text
+                          fontSize="xs"
+                          color={p.muted}
+                          display={{ base: "none", sm: "block" }}
+                        >
                           USD {item.price?.toFixed(2)} / unidad
                         </Text>
                       </Box>
@@ -298,7 +326,7 @@ const Cart = () => {
                       >
                         <Box
                           as="button"
-                          px={3}
+                          px={{ base: 2, md: 3 }}
                           py={2}
                           fontSize="sm"
                           color={p.fg}
@@ -311,18 +339,18 @@ const Cart = () => {
                           −
                         </Box>
                         <Text
-                          px={4}
+                          px={{ base: 2, md: 4 }}
                           fontSize="sm"
                           fontWeight="bold"
                           color={p.fg}
-                          minW="30px"
+                          minW="24px"
                           textAlign="center"
                         >
                           {item.quantity}
                         </Text>
                         <Box
                           as="button"
-                          px={3}
+                          px={{ base: 2, md: 3 }}
                           py={2}
                           fontSize="sm"
                           color={p.fg}
@@ -336,11 +364,11 @@ const Cart = () => {
                         </Box>
                       </HStack>
                       <Text
-                        fontSize="md"
+                        fontSize={{ base: "sm", md: "md" }}
                         fontWeight="extrabold"
                         color={p.fg}
                         fontFamily="mono"
-                        w="100px"
+                        w={{ base: "70px", md: "100px" }}
                         textAlign="right"
                         flexShrink={0}
                       >
@@ -353,7 +381,7 @@ const Cart = () => {
                         _hover={{ color: p.fg }}
                         transition="color 0.2s"
                         flexShrink={0}
-                        ml={2}
+                        ml={1}
                         onClick={() => removeFromCart(item.title!)}
                       >
                         ✕
@@ -371,7 +399,8 @@ const Cart = () => {
                 top="100px"
                 border="1px solid"
                 borderColor={p.border}
-                p={8}
+                p={{ base: 5, md: 8 }}
+                mt={{ base: 8, lg: 0 }}
               >
                 <Text
                   fontSize="xs"
@@ -472,7 +501,6 @@ const Cart = () => {
                   transition="all 0.2s"
                   mb={3}
                   _hover={{ opacity: 0.85, transform: "translateY(-1px)" }}
-                  _active={{ transform: "translateY(0)" }}
                   onClick={() => setStep(2)}
                 >
                   Proceder al pago →
@@ -496,7 +524,6 @@ const Cart = () => {
                       borderColor: p.fg,
                       transform: "translateY(-1px)",
                     }}
-                    _active={{ transform: "translateY(0)" }}
                   >
                     Seguir comprando
                   </Button>
@@ -509,14 +536,14 @@ const Cart = () => {
 
       {step === 2 && (
         <Box
-          px={{ base: 6, md: 16 }}
+          px={{ base: 4, md: 8, lg: 16 }}
           pb={20}
           display="flex"
           gap={12}
           alignItems="flex-start"
           flexDir={{ base: "column", lg: "row" }}
         >
-          <Box flex="1" maxW="560px">
+          <Box flex="1" maxW={{ base: "100%", lg: "560px" }}>
             <Text
               fontSize="xs"
               textTransform="uppercase"
@@ -528,97 +555,47 @@ const Cart = () => {
               Datos de contacto
             </Text>
             <VStack spacing={4} mb={10}>
-              <Box w="100%">
-                <Text
-                  fontSize="xs"
-                  textTransform="uppercase"
-                  letterSpacing="widest"
-                  color={p.muted}
-                  mb={2}
-                >
-                  Nombre completo
-                </Text>
-                <Input
-                  value={cardData.name}
-                  onChange={(e) =>
-                    setCardData({ ...cardData, name: e.target.value })
-                  }
-                  placeholder="John Doe"
-                  fontFamily="mono"
-                  fontSize="sm"
-                  bg="transparent"
-                  border="1px solid"
-                  borderColor={p.border}
-                  color={p.fg}
-                  borderRadius="sm"
-                  h="48px"
-                  px={4}
-                  _placeholder={{ color: p.muted }}
-                  _focus={{ borderColor: p.fg, boxShadow: "none" }}
-                  _hover={{ borderColor: p.fg }}
-                />
-              </Box>
-              <Box w="100%">
-                <Text
-                  fontSize="xs"
-                  textTransform="uppercase"
-                  letterSpacing="widest"
-                  color={p.muted}
-                  mb={2}
-                >
-                  Correo electrónico
-                </Text>
-                <Input
-                  value={cardData.email}
-                  onChange={(e) =>
-                    setCardData({ ...cardData, email: e.target.value })
-                  }
-                  placeholder="john@email.com"
-                  type="email"
-                  fontFamily="mono"
-                  fontSize="sm"
-                  bg="transparent"
-                  border="1px solid"
-                  borderColor={p.border}
-                  color={p.fg}
-                  borderRadius="sm"
-                  h="48px"
-                  px={4}
-                  _placeholder={{ color: p.muted }}
-                  _focus={{ borderColor: p.fg, boxShadow: "none" }}
-                  _hover={{ borderColor: p.fg }}
-                />
-              </Box>
-              <Box w="100%">
-                <Text
-                  fontSize="xs"
-                  textTransform="uppercase"
-                  letterSpacing="widest"
-                  color={p.muted}
-                  mb={2}
-                >
-                  Dirección de envío
-                </Text>
-                <Input
-                  value={cardData.address}
-                  onChange={(e) =>
-                    setCardData({ ...cardData, address: e.target.value })
-                  }
-                  placeholder="Calle, ciudad, país"
-                  fontFamily="mono"
-                  fontSize="sm"
-                  bg="transparent"
-                  border="1px solid"
-                  borderColor={p.border}
-                  color={p.fg}
-                  borderRadius="sm"
-                  h="48px"
-                  px={4}
-                  _placeholder={{ color: p.muted }}
-                  _focus={{ borderColor: p.fg, boxShadow: "none" }}
-                  _hover={{ borderColor: p.fg }}
-                />
-              </Box>
+              {[
+                {
+                  label: "Nombre completo",
+                  key: "name",
+                  placeholder: "John Doe",
+                  type: "text",
+                },
+                {
+                  label: "Correo electrónico",
+                  key: "email",
+                  placeholder: "john@email.com",
+                  type: "email",
+                },
+                {
+                  label: "Dirección de envío",
+                  key: "address",
+                  placeholder: "Calle, ciudad, país",
+                  type: "text",
+                },
+              ].map(({ label, key, placeholder, type }) => (
+                <Box key={key} w="100%">
+                  <Text
+                    fontSize="xs"
+                    textTransform="uppercase"
+                    letterSpacing="widest"
+                    color={p.muted}
+                    mb={2}
+                  >
+                    {label}
+                  </Text>
+                  <Input
+                    {...inputProps}
+                    type={type}
+                    placeholder={placeholder}
+                    value={(cardData as any)[key]}
+                    onChange={(e) =>
+                      setCardData({ ...cardData, [key]: e.target.value })
+                    }
+                  />
+                </Box>
+              ))}
             </VStack>
 
             <Text
@@ -634,13 +611,13 @@ const Cart = () => {
 
             <Box
               w="100%"
-              h="180px"
+              h={{ base: "150px", md: "180px" }}
               borderRadius="12px"
               bg={p.fg}
               position="relative"
               overflow="hidden"
               mb={6}
-              p={6}
+              p={{ base: 5, md: 6 }}
             >
               <Box
                 position="absolute"
@@ -661,17 +638,17 @@ const Cart = () => {
                 bg="whiteAlpha.50"
               />
               <Text
-                fontSize="xs"
+                fontSize={{ base: "9px", md: "xs" }}
                 color={p.bg}
                 opacity={0.5}
                 letterSpacing="widest"
                 textTransform="uppercase"
-                mb={8}
+                mb={{ base: 6, md: 8 }}
               >
                 Ellie-Jane Card
               </Text>
               <Text
-                fontSize="lg"
+                fontSize={{ base: "md", md: "lg" }}
                 fontWeight="bold"
                 color={p.bg}
                 letterSpacing="4px"
@@ -692,7 +669,7 @@ const Cart = () => {
                     Titular
                   </Text>
                   <Text
-                    fontSize="sm"
+                    fontSize={{ base: "xs", md: "sm" }}
                     color={p.bg}
                     fontWeight="bold"
                     letterSpacing="wider"
@@ -711,7 +688,7 @@ const Cart = () => {
                     Vence
                   </Text>
                   <Text
-                    fontSize="sm"
+                    fontSize={{ base: "xs", md: "sm" }}
                     color={p.bg}
                     fontWeight="bold"
                     letterSpacing="wider"
@@ -734,26 +711,15 @@ const Cart = () => {
                   Número de tarjeta
                 </Text>
                 <Input
+                  {...inputProps}
                   value={cardData.number}
+                  placeholder="1234 5678 9012 3456"
                   onChange={(e) =>
                     setCardData({
                       ...cardData,
                       number: formatCardNumber(e.target.value),
                     })
                   }
-                  placeholder="1234 5678 9012 3456"
-                  fontFamily="mono"
-                  fontSize="sm"
-                  bg="transparent"
-                  border="1px solid"
-                  borderColor={p.border}
-                  color={p.fg}
-                  borderRadius="sm"
-                  h="48px"
-                  px={4}
-                  _placeholder={{ color: p.muted }}
-                  _focus={{ borderColor: p.fg, boxShadow: "none" }}
-                  _hover={{ borderColor: p.fg }}
                 />
               </Box>
               <HStack w="100%" spacing={4}>
@@ -765,29 +731,18 @@ const Cart = () => {
                     color={p.muted}
                     mb={2}
                   >
-                    Fecha de vencimiento
+                    Vencimiento
                   </Text>
                   <Input
+                    {...inputProps}
                     value={cardData.expiry}
+                    placeholder="MM/AA"
                     onChange={(e) =>
                       setCardData({
                         ...cardData,
                         expiry: formatExpiry(e.target.value),
                       })
                     }
-                    placeholder="MM/AA"
-                    fontFamily="mono"
-                    fontSize="sm"
-                    bg="transparent"
-                    border="1px solid"
-                    borderColor={p.border}
-                    color={p.fg}
-                    borderRadius="sm"
-                    h="48px"
-                    px={4}
-                    _placeholder={{ color: p.muted }}
-                    _focus={{ borderColor: p.fg, boxShadow: "none" }}
-                    _hover={{ borderColor: p.fg }}
                   />
                 </Box>
                 <Box flex="1">
@@ -801,27 +756,16 @@ const Cart = () => {
                     CVV
                   </Text>
                   <Input
+                    {...inputProps}
                     value={cardData.cvv}
+                    placeholder="•••"
+                    type="password"
                     onChange={(e) =>
                       setCardData({
                         ...cardData,
                         cvv: e.target.value.replace(/\D/g, "").slice(0, 4),
                       })
                     }
-                    placeholder="•••"
-                    type="password"
-                    fontFamily="mono"
-                    fontSize="sm"
-                    bg="transparent"
-                    border="1px solid"
-                    borderColor={p.border}
-                    color={p.fg}
-                    borderRadius="sm"
-                    h="48px"
-                    px={4}
-                    _placeholder={{ color: p.muted }}
-                    _focus={{ borderColor: p.fg, boxShadow: "none" }}
-                    _hover={{ borderColor: p.fg }}
                   />
                 </Box>
               </HStack>
@@ -835,7 +779,8 @@ const Cart = () => {
             top="100px"
             border="1px solid"
             borderColor={p.border}
-            p={8}
+            p={{ base: 5, md: 8 }}
+            mt={{ base: 8, lg: 0 }}
           >
             <Text
               fontSize="xs"
@@ -930,13 +875,12 @@ const Cart = () => {
               w="100%"
               mb={3}
               isLoading={isProcessing}
-              loadingText="Procesando pago..."
+              loadingText="Procesando..."
               transition="all 0.2s"
-              _hover={{ opacity: 0.85, transform: "translateY(-1px)" }}
-              _active={{ transform: "translateY(0)" }}
+              _hover={{ opacity: 0.85 }}
               onClick={handleConfirm}
             >
-              Confirmar pago — USD {cartTotal.toFixed(2)}
+              Confirmar — USD {cartTotal.toFixed(2)}
             </Button>
             <Button
               bg="transparent"
@@ -974,7 +918,7 @@ const Cart = () => {
           flexDir="column"
           alignItems="center"
           justifyContent="center"
-          py={24}
+          py={{ base: 16, md: 24 }}
           px={6}
           textAlign="center"
           gap={6}
@@ -1004,7 +948,7 @@ const Cart = () => {
               Pedido confirmado
             </Text>
             <Text
-              fontSize={{ base: "3xl", md: "4xl" }}
+              fontSize={{ base: "2xl", md: "4xl" }}
               fontWeight="extrabold"
               color={p.fg}
               lineHeight="1"
@@ -1019,14 +963,14 @@ const Cart = () => {
               lineHeight="1.8"
               mx="auto"
             >
-              Hemos recibido tu pedido. Recibirás un correo de confirmación en
-              breve con los detalles de tu envío.
+              Recibirás un correo de confirmación en breve con los detalles de
+              tu envío.
             </Text>
           </Box>
           <Box
             border="1px solid"
             borderColor={p.border}
-            p={8}
+            p={{ base: 5, md: 8 }}
             w="100%"
             maxW="400px"
             mt={4}
@@ -1041,37 +985,38 @@ const Cart = () => {
             >
               Resumen del pedido
             </Text>
-            <HStack justify="space-between" mb={2}>
-              <Text fontSize="xs" color={p.muted}>
-                Número de orden
-              </Text>
-              <Text
-                fontSize="xs"
-                fontWeight="bold"
-                color={p.fg}
-                fontFamily="mono"
-              >
-                #EJ-{Math.floor(Math.random() * 90000) + 10000}
-              </Text>
-            </HStack>
-            <HStack justify="space-between" mb={2}>
-              <Text fontSize="xs" color={p.muted}>
-                Envío estimado
-              </Text>
-              <Text fontSize="xs" fontWeight="bold" color={p.fg}>
-                3-5 días hábiles
-              </Text>
-            </HStack>
-            <HStack justify="space-between">
-              <Text fontSize="xs" color={p.muted}>
-                Método de pago
-              </Text>
-              <Text fontSize="xs" fontWeight="bold" color={p.fg}>
-                •••• {cardData.number.replace(/\s/g, "").slice(-4) || "••••"}
-              </Text>
-            </HStack>
+            {[
+              {
+                label: "Número de orden",
+                value: `#EJ-${Math.floor(Math.random() * 90000) + 10000}`,
+              },
+              { label: "Envío estimado", value: "3-5 días hábiles" },
+              {
+                label: "Método de pago",
+                value: `•••• ${cardData.number.replace(/\s/g, "").slice(-4) || "••••"}`,
+              },
+            ].map(({ label, value }) => (
+              <HStack key={label} justify="space-between" mb={2}>
+                <Text fontSize="xs" color={p.muted}>
+                  {label}
+                </Text>
+                <Text
+                  fontSize="xs"
+                  fontWeight="bold"
+                  color={p.fg}
+                  fontFamily="mono"
+                >
+                  {value}
+                </Text>
+              </HStack>
+            ))}
           </Box>
-          <HStack spacing={4} mt={4}>
+          <HStack
+            spacing={3}
+            mt={4}
+            flexDir={{ base: "column", sm: "row" }}
+            w={{ base: "100%", sm: "auto" }}
+          >
             <Link href="/products" passHref>
               <Button
                 bg={p.fg}
@@ -1085,7 +1030,8 @@ const Cart = () => {
                 h="48px"
                 px={8}
                 transition="all 0.2s"
-                _hover={{ opacity: 0.85, transform: "translateY(-1px)" }}
+                w={{ base: "100%", sm: "auto" }}
+                _hover={{ opacity: 0.85 }}
               >
                 Seguir comprando
               </Button>
@@ -1104,6 +1050,7 @@ const Cart = () => {
                 textTransform="uppercase"
                 h="48px"
                 px={8}
+                w={{ base: "100%", sm: "auto" }}
                 transition="all 0.2s"
                 _hover={{ borderColor: p.fg }}
               >

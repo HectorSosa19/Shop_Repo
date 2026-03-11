@@ -1,4 +1,6 @@
-import CardComponent from "@/components/cart";
+// Shared responsive filter + grid pattern for category pages (new.tsx, women.tsx, electronics.tsx, jewelery.tsx)
+// This shows the new.tsx — replicate same pattern for others, just change endpoint + title
+
 import FullModal from "@/components/full-modal";
 import ContentModal, {
   ContentProps,
@@ -17,9 +19,17 @@ import {
   RangeSliderTrack,
   RangeSliderFilledTrack,
   RangeSliderThumb,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerBody,
+  DrawerHeader,
+  DrawerCloseButton,
+  useDisclosure,
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { ReactElement, useEffect, useState } from "react";
+import { RiSlidersHLine } from "react-icons/ri";
 
 const SORT_OPTIONS = [
   { label: "Relevancia", value: "default" },
@@ -28,8 +38,166 @@ const SORT_OPTIONS = [
   { label: "Mejor rating", value: "rating-desc" },
 ];
 
+// Reusable filter panel content
+const FilterPanel = ({
+  p,
+  sortBy,
+  setSortBy,
+  priceRange,
+  setPriceRange,
+  maxPrice,
+  onlyInStock,
+  setOnlyInStock,
+  onClear,
+}: any) => (
+  <VStack align="flex-start" spacing={6} w="100%">
+    <Box w="100%">
+      <Text
+        fontSize="xs"
+        textTransform="uppercase"
+        letterSpacing="wider"
+        color={p.muted}
+        mb={3}
+      >
+        Ordenar por
+      </Text>
+      <VStack align="flex-start" spacing={2}>
+        {SORT_OPTIONS.map((opt) => (
+          <HStack
+            key={opt.value}
+            cursor="pointer"
+            onClick={() => setSortBy(opt.value)}
+            spacing={2}
+          >
+            <Box
+              w="8px"
+              h="8px"
+              borderRadius="full"
+              border={`1.5px solid ${p.borderActive}`}
+              bg={sortBy === opt.value ? p.fg : "transparent"}
+              transition="background 0.15s"
+              flexShrink={0}
+            />
+            <Text
+              fontSize="sm"
+              color={sortBy === opt.value ? p.fg : p.muted}
+              fontWeight={sortBy === opt.value ? "bold" : "normal"}
+              transition="color 0.15s"
+            >
+              {opt.label}
+            </Text>
+          </HStack>
+        ))}
+      </VStack>
+    </Box>
+
+    <Divider borderColor={p.border} />
+
+    <Box w="100%">
+      <HStack justify="space-between" mb={3}>
+        <Text
+          fontSize="xs"
+          textTransform="uppercase"
+          letterSpacing="wider"
+          color={p.muted}
+        >
+          Precio
+        </Text>
+        <Text fontSize="xs" color={p.fg} fontWeight="bold">
+          ${priceRange[0]} – ${priceRange[1]}
+        </Text>
+      </HStack>
+      <RangeSlider
+        min={0}
+        max={maxPrice}
+        step={5}
+        value={priceRange}
+        onChange={(val) => setPriceRange(val as [number, number])}
+      >
+        <RangeSliderTrack bg={p.border} h="2px">
+          <RangeSliderFilledTrack bg={p.fg} />
+        </RangeSliderTrack>
+        <RangeSliderThumb
+          index={0}
+          w="14px"
+          h="14px"
+          border={`2px solid ${p.borderActive}`}
+          bg={p.bg}
+          boxShadow="none"
+          _focus={{ boxShadow: "none" }}
+        />
+        <RangeSliderThumb
+          index={1}
+          w="14px"
+          h="14px"
+          border={`2px solid ${p.borderActive}`}
+          bg={p.bg}
+          boxShadow="none"
+          _focus={{ boxShadow: "none" }}
+        />
+      </RangeSlider>
+    </Box>
+
+    <Divider borderColor={p.border} />
+
+    <Box w="100%">
+      <Text
+        fontSize="xs"
+        textTransform="uppercase"
+        letterSpacing="wider"
+        color={p.muted}
+        mb={3}
+      >
+        Disponibilidad
+      </Text>
+      <HStack
+        cursor="pointer"
+        spacing={2}
+        onClick={() => setOnlyInStock(!onlyInStock)}
+      >
+        <Box
+          w="14px"
+          h="14px"
+          border={`1.5px solid ${p.borderActive}`}
+          borderRadius="2px"
+          bg={onlyInStock ? p.fg : "transparent"}
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          transition="background 0.15s"
+          flexShrink={0}
+        >
+          {onlyInStock && (
+            <Text fontSize="8px" color={p.bg} lineHeight="1">
+              ✓
+            </Text>
+          )}
+        </Box>
+        <Text fontSize="sm" color={onlyInStock ? p.fg : p.muted}>
+          Solo en stock
+        </Text>
+      </HStack>
+    </Box>
+
+    <Divider borderColor={p.border} />
+
+    <Text
+      fontSize="xs"
+      color={p.muted}
+      cursor="pointer"
+      _hover={{ color: p.fg }}
+      onClick={onClear}
+      textTransform="uppercase"
+      letterSpacing="wider"
+    >
+      Limpiar filtros
+    </Text>
+  </VStack>
+);
+
 const NewClothes = () => {
   const { palette: p } = useTheme();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [data, setData] = useState<ContentProps[]>([]);
   const [selectedItem, setSelectedItem] = useState<ContentProps | null>(null);
@@ -54,15 +222,18 @@ const NewClothes = () => {
 
   const maxPrice = Math.ceil(Math.max(...data.map((d) => d.price ?? 0), 1000));
 
+  const handleClear = () => {
+    setPriceRange([0, maxPrice]);
+    setSortBy("default");
+    setOnlyInStock(false);
+  };
+
   const filteredData = data
     .filter((item) => {
       const price = item.price ?? 0;
       return price >= priceRange[0] && price <= priceRange[1];
     })
-    .filter((item) => {
-      if (!onlyInStock) return true;
-      return (item as any).stock > 0;
-    })
+    .filter((item) => !onlyInStock || (item as any).stock > 0)
     .sort((a, b) => {
       if (sortBy === "price-asc") return (a.price ?? 0) - (b.price ?? 0);
       if (sortBy === "price-desc") return (b.price ?? 0) - (a.price ?? 0);
@@ -74,7 +245,11 @@ const NewClothes = () => {
   return (
     <>
       <Box minH="100vh" bg={p.bg} fontFamily="mono" transition="all 0.4s">
-        <Box px={{ base: 6, md: 16 }} pt={14} pb={8}>
+        <Box
+          px={{ base: 4, md: 8, lg: 16 }}
+          pt={{ base: 8, md: 14 }}
+          pb={{ base: 4, md: 8 }}
+        >
           <Text
             fontSize="xs"
             textTransform="uppercase"
@@ -86,7 +261,7 @@ const NewClothes = () => {
           </Text>
           <HStack justify="space-between" align="flex-end">
             <Text
-              fontSize={{ base: "3xl", md: "5xl" }}
+              fontSize={{ base: "2xl", md: "4xl", lg: "5xl" }}
               fontWeight="extrabold"
               color={p.fg}
               fontFamily="mono"
@@ -94,15 +269,50 @@ const NewClothes = () => {
             >
               Men's Clothing
             </Text>
-            <Text fontSize="sm" color={p.muted} fontFamily="mono">
-              {filteredData.length} productos
-            </Text>
+            <HStack spacing={3}>
+              <Text
+                fontSize="sm"
+                color={p.muted}
+                fontFamily="mono"
+                display={{ base: "none", sm: "block" }}
+              >
+                {filteredData.length} productos
+              </Text>
+              <Box
+                display={{ base: "flex", lg: "none" }}
+                alignItems="center"
+                gap={2}
+                border="1px solid"
+                borderColor={p.border}
+                px={3}
+                py={2}
+                cursor="pointer"
+                _hover={{ borderColor: p.fg }}
+                transition="all 0.2s"
+                onClick={onOpen}
+              >
+                <Box as={RiSlidersHLine} w="14px" h="14px" color={p.fg} />
+                <Text
+                  fontSize="10px"
+                  fontFamily="mono"
+                  letterSpacing="widest"
+                  textTransform="uppercase"
+                  color={p.fg}
+                >
+                  Filtros
+                </Text>
+              </Box>
+            </HStack>
           </HStack>
-          <Divider mt={6} borderColor={p.fg} borderWidth="1px" />
+          <Divider
+            mt={{ base: 4, md: 6 }}
+            borderColor={p.fg}
+            borderWidth="1px"
+          />
         </Box>
 
         <Box
-          px={{ base: 6, md: 16 }}
+          px={{ base: 4, md: 8, lg: 16 }}
           pb={20}
           display="flex"
           gap={10}
@@ -125,166 +335,30 @@ const NewClothes = () => {
               >
                 Filtros
               </Text>
-              <Text
-                fontSize="xs"
-                color={p.muted}
-                cursor="pointer"
-                _hover={{ color: p.fg }}
-                onClick={() => {
-                  setPriceRange([0, maxPrice]);
-                  setSortBy("default");
-                  setOnlyInStock(false);
-                }}
-              >
-                Limpiar
-              </Text>
             </HStack>
-
             <Divider borderColor={p.fg} mb={5} />
-
-            <VStack align="flex-start" spacing={6}>
-              <Box w="100%">
-                <Text
-                  fontSize="xs"
-                  textTransform="uppercase"
-                  letterSpacing="wider"
-                  color={p.muted}
-                  mb={3}
-                >
-                  Ordenar por
-                </Text>
-                <VStack align="flex-start" spacing={2}>
-                  {SORT_OPTIONS.map((opt) => (
-                    <HStack
-                      key={opt.value}
-                      cursor="pointer"
-                      onClick={() => setSortBy(opt.value)}
-                      spacing={2}
-                    >
-                      <Box
-                        w="8px"
-                        h="8px"
-                        borderRadius="full"
-                        border={`1.5px solid ${p.borderActive}`}
-                        bg={sortBy === opt.value ? p.fg : "transparent"}
-                        transition="background 0.15s"
-                        flexShrink={0}
-                      />
-                      <Text
-                        fontSize="sm"
-                        color={sortBy === opt.value ? p.fg : p.muted}
-                        fontWeight={sortBy === opt.value ? "bold" : "normal"}
-                        transition="color 0.15s"
-                      >
-                        {opt.label}
-                      </Text>
-                    </HStack>
-                  ))}
-                </VStack>
-              </Box>
-
-              <Divider borderColor={p.border} />
-
-              <Box w="100%">
-                <HStack justify="space-between" mb={3}>
-                  <Text
-                    fontSize="xs"
-                    textTransform="uppercase"
-                    letterSpacing="wider"
-                    color={p.muted}
-                  >
-                    Precio
-                  </Text>
-                  <Text fontSize="xs" color={p.fg} fontWeight="bold">
-                    ${priceRange[0]} – ${priceRange[1]}
-                  </Text>
-                </HStack>
-                <RangeSlider
-                  min={0}
-                  max={maxPrice}
-                  step={5}
-                  value={priceRange}
-                  onChange={(val) => setPriceRange(val as [number, number])}
-                >
-                  <RangeSliderTrack bg={p.border} h="2px">
-                    <RangeSliderFilledTrack bg={p.fg} />
-                  </RangeSliderTrack>
-                  <RangeSliderThumb
-                    index={0}
-                    w="14px"
-                    h="14px"
-                    border={`2px solid ${p.borderActive}`}
-                    bg={p.bg}
-                    boxShadow="none"
-                    _focus={{ boxShadow: "none" }}
-                  />
-                  <RangeSliderThumb
-                    index={1}
-                    w="14px"
-                    h="14px"
-                    border={`2px solid ${p.borderActive}`}
-                    bg={p.bg}
-                    boxShadow="none"
-                    _focus={{ boxShadow: "none" }}
-                  />
-                </RangeSlider>
-              </Box>
-
-              <Divider borderColor={p.border} />
-
-              <Box w="100%">
-                <Text
-                  fontSize="xs"
-                  textTransform="uppercase"
-                  letterSpacing="wider"
-                  color={p.muted}
-                  mb={3}
-                >
-                  Disponibilidad
-                </Text>
-                <HStack
-                  cursor="pointer"
-                  spacing={2}
-                  onClick={() => setOnlyInStock(!onlyInStock)}
-                >
-                  <Box
-                    w="14px"
-                    h="14px"
-                    border={`1.5px solid ${p.borderActive}`}
-                    borderRadius="2px"
-                    bg={onlyInStock ? p.fg : "transparent"}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    transition="background 0.15s"
-                    flexShrink={0}
-                  >
-                    {onlyInStock && (
-                      <Text fontSize="8px" color={p.bg} lineHeight="1">
-                        ✓
-                      </Text>
-                    )}
-                  </Box>
-                  <Text fontSize="sm" color={onlyInStock ? p.fg : p.muted}>
-                    Solo en stock
-                  </Text>
-                </HStack>
-              </Box>
-            </VStack>
+            <FilterPanel
+              p={p}
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              priceRange={priceRange}
+              setPriceRange={setPriceRange}
+              maxPrice={maxPrice}
+              onlyInStock={onlyInStock}
+              setOnlyInStock={setOnlyInStock}
+              onClear={handleClear}
+            />
           </Box>
 
-          <Box flex="1">
+          <Box flex="1" minW={0}>
             {loading ? (
-              <SimpleGrid
-                columns={{ base: 1, sm: 2, md: 2, lg: 3 }}
-                spacing={0}
-              >
+              <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} spacing={0}>
                 {Array(6)
                   .fill("")
                   .map((_, i) => (
                     <Box key={i} p={4}>
                       <Skeleton
-                        h="400px"
+                        h={{ base: "240px", md: "320px", lg: "400px" }}
                         borderRadius="none"
                         startColor={p.skeletonStart}
                         endColor={p.skeletonEnd}
@@ -318,10 +392,7 @@ const NewClothes = () => {
                 </Text>
               </Box>
             ) : (
-              <SimpleGrid
-                columns={{ base: 1, sm: 2, md: 2, lg: 3 }}
-                spacing={0}
-              >
+              <SimpleGrid columns={{ base: 2, sm: 2, lg: 3 }} spacing={0}>
                 {filteredData.map((item) => (
                   <Box
                     key={item.title}
@@ -331,7 +402,7 @@ const NewClothes = () => {
                     borderBottom="1px solid"
                     borderRight="1px solid"
                     borderColor={p.border}
-                    p={6}
+                    p={{ base: 3, md: 6 }}
                     transition="all 0.2s"
                     _hover={{
                       bg: p.cardBg,
@@ -344,11 +415,16 @@ const NewClothes = () => {
                   >
                     <Box
                       w="100%"
-                      h="320px"
+                      h={{
+                        base: "160px",
+                        sm: "220px",
+                        md: "280px",
+                        lg: "320px",
+                      }}
                       display="flex"
                       alignItems="center"
                       justifyContent="center"
-                      mb={4}
+                      mb={3}
                       overflow="hidden"
                     >
                       <Box
@@ -364,10 +440,9 @@ const NewClothes = () => {
                         _groupHover={{ transform: "scale(1.05)" }}
                       />
                     </Box>
-
                     <VStack align="flex-start" spacing={1}>
                       <Text
-                        fontSize="xs"
+                        fontSize={{ base: "9px", md: "xs" }}
                         color={p.muted}
                         textTransform="uppercase"
                         letterSpacing="wider"
@@ -376,7 +451,7 @@ const NewClothes = () => {
                         Men's Clothing
                       </Text>
                       <Text
-                        fontSize="sm"
+                        fontSize={{ base: "xs", md: "sm" }}
                         fontWeight="bold"
                         color={p.fg}
                         fontFamily="mono"
@@ -387,7 +462,7 @@ const NewClothes = () => {
                       </Text>
                       <HStack justify="space-between" w="100%" pt={1}>
                         <Text
-                          fontSize="md"
+                          fontSize={{ base: "sm", md: "md" }}
                           fontWeight="extrabold"
                           color={p.fg}
                           fontFamily="mono"
@@ -403,6 +478,7 @@ const NewClothes = () => {
                               fontSize="xs"
                               color={p.muted}
                               fontFamily="mono"
+                              display={{ base: "none", sm: "block" }}
                             >
                               {item.rating.rate}
                             </Text>
@@ -410,25 +486,25 @@ const NewClothes = () => {
                         )}
                       </HStack>
                     </VStack>
-
                     <Box
                       className="card-action"
                       position="absolute"
-                      bottom={6}
-                      right={6}
+                      bottom={{ base: 2, md: 6 }}
+                      right={{ base: 2, md: 6 }}
                       bg={p.fg}
                       color={p.bg}
-                      fontSize="10px"
+                      fontSize={{ base: "8px", md: "10px" }}
                       fontFamily="mono"
                       textTransform="uppercase"
                       letterSpacing="wider"
-                      px={3}
+                      px={2}
                       py={1}
                       borderRadius="full"
                       opacity={0}
                       transform="translateY(4px)"
                       transition="all 0.2s"
                       pointerEvents="none"
+                      display={{ base: "none", sm: "block" }}
                     >
                       Ver detalle →
                     </Box>
@@ -439,6 +515,65 @@ const NewClothes = () => {
           </Box>
         </Box>
       </Box>
+
+      <Drawer isOpen={isOpen} placement="bottom" onClose={onClose}>
+        <DrawerOverlay />
+        <DrawerContent bg={p.bg} borderTopRadius="xl" maxH="80vh">
+          <DrawerHeader borderBottomWidth="1px" borderColor={p.border} pb={4}>
+            <HStack justify="space-between">
+              <Text
+                fontSize="xs"
+                fontFamily="mono"
+                textTransform="uppercase"
+                letterSpacing="widest"
+                fontWeight="bold"
+                color={p.fg}
+              >
+                Filtros
+              </Text>
+              <DrawerCloseButton position="static" color={p.fg} />
+            </HStack>
+          </DrawerHeader>
+          <DrawerBody py={6}>
+            <FilterPanel
+              p={p}
+              sortBy={sortBy}
+              setSortBy={setSortBy}
+              priceRange={priceRange}
+              setPriceRange={setPriceRange}
+              maxPrice={maxPrice}
+              onlyInStock={onlyInStock}
+              setOnlyInStock={setOnlyInStock}
+              onClear={() => {
+                handleClear();
+                onClose();
+              }}
+            />
+            <Box
+              mt={8}
+              bg={p.fg}
+              color={p.bg}
+              h="48px"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              cursor="pointer"
+              onClick={onClose}
+              _hover={{ opacity: 0.85 }}
+            >
+              <Text
+                fontSize="10px"
+                fontFamily="mono"
+                fontWeight="bold"
+                letterSpacing="widest"
+                textTransform="uppercase"
+              >
+                Ver {filteredData.length} productos
+              </Text>
+            </Box>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
 
       {selectedItem && (
         <FullModal
@@ -451,6 +586,7 @@ const NewClothes = () => {
             price={selectedItem.price}
             description={selectedItem.description}
             rating={selectedItem.rating}
+            category="men's clothing"
           />
         </FullModal>
       )}

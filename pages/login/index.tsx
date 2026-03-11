@@ -7,7 +7,6 @@ import { useTheme } from "@/context/ThemeContext";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-// Simulated user store
 const FAKE_USERS: Record<string, string> = {
   admin: "1234",
   usuario: "password",
@@ -20,8 +19,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [mode, setMode] = useState<"login" | "register">("login");
-
-  // Register fields
   const [regName, setRegName] = useState("");
   const [regEmail, setRegEmail] = useState("");
   const [regUser, setRegUser] = useState("");
@@ -40,34 +37,32 @@ const Login = () => {
         status: "warning",
         duration: 3000,
         isClosable: true,
-        position: "top-right",
+        position: "top",
       });
       return;
     }
-
     setIsLoading(true);
     await new Promise((r) => setTimeout(r, 1200));
     setIsLoading(false);
-
     const validPass = FAKE_USERS[username.toLowerCase()];
     if (validPass && validPass === password) {
       toast({
         title: `¡Bienvenido, ${username}! 👋`,
-        description: "Inicio de sesión exitoso. Redirigiendo...",
+        description: "Redirigiendo...",
         status: "success",
         duration: 3000,
         isClosable: true,
-        position: "top-right",
+        position: "top",
       });
       setTimeout(() => router.push("/"), 1500);
     } else {
       toast({
         title: "Credenciales incorrectas",
-        description: "Usuario o contraseña inválidos. Intenta de nuevo.",
+        description: "Usuario o contraseña inválidos.",
         status: "error",
         duration: 4000,
         isClosable: true,
-        position: "top-right",
+        position: "top",
       });
     }
   };
@@ -76,54 +71,46 @@ const Login = () => {
     if (!regName || !regEmail || !regUser || !regPass || !regConfirm) {
       toast({
         title: "Campos requeridos",
-        description: "Por favor completa todos los campos.",
         status: "warning",
         duration: 3000,
         isClosable: true,
-        position: "top-right",
+        position: "top",
       });
       return;
     }
     if (regPass !== regConfirm) {
       toast({
         title: "Las contraseñas no coinciden",
-        description: "Verifica que ambas contraseñas sean iguales.",
         status: "error",
         duration: 3000,
         isClosable: true,
-        position: "top-right",
+        position: "top",
       });
       return;
     }
     if (regPass.length < 4) {
       toast({
         title: "Contraseña muy corta",
-        description: "La contraseña debe tener al menos 4 caracteres.",
+        description: "Mínimo 4 caracteres.",
         status: "warning",
         duration: 3000,
         isClosable: true,
-        position: "top-right",
+        position: "top",
       });
       return;
     }
-
     setIsLoading(true);
     await new Promise((r) => setTimeout(r, 1400));
     setIsLoading(false);
-
-    // Save to fake store
     FAKE_USERS[regUser.toLowerCase()] = regPass;
-
     toast({
       title: `¡Cuenta creada! 🎉`,
-      description: `Bienvenido a Ellie-Jane, ${regName}. Ya puedes iniciar sesión.`,
+      description: `Bienvenido, ${regName}. Ya puedes iniciar sesión.`,
       status: "success",
       duration: 4000,
       isClosable: true,
-      position: "top-right",
+      position: "top",
     });
-
-    // Switch to login and prefill
     setUsername(regUser);
     setPassword(regPass);
     setMode("login");
@@ -145,93 +132,89 @@ const Login = () => {
     transition: "all 0.2s",
   };
 
-  const DecorativePanel = () => (
-    <Box
-      w="50%"
-      bg={dark ? "white" : "black"}
-      display={{ base: "none", md: "flex" }}
-      flexDir="column"
-      alignItems="center"
-      justifyContent="center"
-      position="relative"
-      overflow="hidden"
-      transition="background 0.4s"
-    >
-      <Text
-        position="absolute"
-        fontSize="260px"
-        fontWeight="extrabold"
-        color={dark ? "blackAlpha.50" : "whiteAlpha.50"}
-        fontFamily="serif"
-        fontStyle="italic"
-        userSelect="none"
-        lineHeight="1"
-        letterSpacing="-10px"
-      >
-        EJ
-      </Text>
-      <Box
-        as={GiMoonBats}
-        w="200px"
-        h="200px"
-        color={dark ? "black" : "white"}
-        opacity={0.9}
-        transition="color 0.4s"
-        zIndex={1}
-      />
-      <Box
-        position="absolute"
-        bottom={12}
-        textAlign="center"
-        px={10}
-        zIndex={1}
-      >
-        <Text
-          fontSize="xs"
-          textTransform="uppercase"
-          letterSpacing="widest"
-          color={dark ? "blackAlpha.400" : "whiteAlpha.400"}
-          mb={2}
-        >
-          Ellie-Jane
-        </Text>
-        <Text
-          fontSize="sm"
-          color={dark ? "blackAlpha.500" : "whiteAlpha.500"}
-          fontFamily="mono"
-          lineHeight="1.8"
-        >
-          {mode === "login"
-            ? "Tu destino de moda favorito"
-            : "Únete a nuestra comunidad"}
-        </Text>
-      </Box>
-      {[
-        { t: 10, r: 10, s: 70 },
-        { t: 7, r: 7, s: 98 },
-        { b: 36, l: 10, s: 50 },
-        { b: 32, l: 7, s: 72 },
-      ].map((c, i) => (
-        <Box
-          key={i}
-          position="absolute"
-          top={c.t !== undefined ? c.t : undefined}
-          bottom={c.b !== undefined ? c.b : undefined}
-          right={c.r !== undefined ? c.r : undefined}
-          left={c.l !== undefined ? c.l : undefined}
-          w={`${c.s}px`}
-          h={`${c.s}px`}
-          border="1px solid"
-          borderColor={dark ? "blackAlpha.150" : "whiteAlpha.150"}
-          borderRadius="full"
-        />
-      ))}
-    </Box>
-  );
-
   return (
     <Box minH="100vh" display="flex" fontFamily="mono" transition="all 0.4s">
-      <DecorativePanel />
+      <Box
+        w="50%"
+        bg={dark ? "white" : "black"}
+        display={{ base: "none", md: "flex" }}
+        flexDir="column"
+        alignItems="center"
+        justifyContent="center"
+        position="relative"
+        overflow="hidden"
+        transition="background 0.4s"
+      >
+        <Text
+          position="absolute"
+          fontSize={{ md: "160px", lg: "260px" }}
+          fontWeight="extrabold"
+          color={dark ? "blackAlpha.50" : "whiteAlpha.50"}
+          fontFamily="serif"
+          fontStyle="italic"
+          userSelect="none"
+          lineHeight="1"
+          letterSpacing="-10px"
+        >
+          EJ
+        </Text>
+        <Box
+          as={GiMoonBats}
+          w={{ md: "140px", lg: "200px" }}
+          h={{ md: "140px", lg: "200px" }}
+          color={dark ? "black" : "white"}
+          opacity={0.9}
+          transition="color 0.4s"
+          zIndex={1}
+        />
+        <Box
+          position="absolute"
+          bottom={12}
+          textAlign="center"
+          px={10}
+          zIndex={1}
+        >
+          <Text
+            fontSize="xs"
+            textTransform="uppercase"
+            letterSpacing="widest"
+            color={dark ? "blackAlpha.400" : "whiteAlpha.400"}
+            mb={2}
+          >
+            Ellie-Jane
+          </Text>
+          <Text
+            fontSize="sm"
+            color={dark ? "blackAlpha.500" : "whiteAlpha.500"}
+            fontFamily="mono"
+            lineHeight="1.8"
+          >
+            {mode === "login"
+              ? "Tu destino de moda favorito"
+              : "Únete a nuestra comunidad"}
+          </Text>
+        </Box>
+        {[
+          { t: 10, r: 10, s: 70 },
+          { t: 7, r: 7, s: 98 },
+          { b: 36, l: 10, s: 50 },
+          { b: 32, l: 7, s: 72 },
+        ].map((c, i) => (
+          <Box
+            key={i}
+            position="absolute"
+            top={c.t !== undefined ? c.t : undefined}
+            bottom={(c as any).b !== undefined ? (c as any).b : undefined}
+            right={c.r !== undefined ? c.r : undefined}
+            left={(c as any).l !== undefined ? (c as any).l : undefined}
+            w={`${c.s}px`}
+            h={`${c.s}px`}
+            border="1px solid"
+            borderColor={dark ? "blackAlpha.150" : "whiteAlpha.150"}
+            borderRadius="full"
+          />
+        ))}
+      </Box>
 
       <Box
         w={{ base: "100%", md: "50%" }}
@@ -239,16 +222,17 @@ const Login = () => {
         display="flex"
         alignItems="center"
         justifyContent="center"
-        px={{ base: 6, sm: 10 }}
-        py={16}
+        px={{ base: 5, sm: 8, md: 10 }}
+        py={{ base: 10, md: 16 }}
         transition="all 0.4s"
         position="relative"
         overflowY="auto"
+        minH="100vh"
       >
         <Box
           position="absolute"
-          top={8}
-          left={10}
+          top={{ base: 5, md: 8 }}
+          left={{ base: 5, md: 10 }}
           display="flex"
           alignItems="center"
           gap={2}
@@ -281,13 +265,13 @@ const Login = () => {
             <Box
               display="flex"
               alignItems="baseline"
-              gap={1}
-              mb={10}
+              gap={0}
+              mb={8}
               cursor="pointer"
             >
               <Text
                 className={styles.title}
-                fontSize="42px"
+                fontSize={{ base: "32px", md: "42px" }}
                 color={p.fg}
                 transition="color 0.4s"
               >
@@ -295,7 +279,7 @@ const Login = () => {
               </Text>
               <Text
                 className={styles.title}
-                fontSize="42px"
+                fontSize={{ base: "32px", md: "42px" }}
                 color={p.muted}
                 transition="color 0.4s"
               >
@@ -304,7 +288,7 @@ const Login = () => {
             </Box>
           </Link>
 
-          <Box display="flex" mb={10} border="1px solid" borderColor={p.border}>
+          <Box display="flex" mb={8} border="1px solid" borderColor={p.border}>
             {(["login", "register"] as const).map((m) => (
               <Box
                 key={m}
@@ -314,7 +298,7 @@ const Login = () => {
                 cursor="pointer"
                 bg={mode === m ? p.fg : "transparent"}
                 color={mode === m ? p.bg : p.muted}
-                fontSize="10px"
+                fontSize={{ base: "9px", md: "10px" }}
                 fontFamily="mono"
                 fontWeight="bold"
                 letterSpacing="widest"
@@ -329,8 +313,8 @@ const Login = () => {
           </Box>
 
           {mode === "login" && (
-            <Box display="flex" flexDir="column" gap={6}>
-              <Box mb={4}>
+            <Box display="flex" flexDir="column" gap={5}>
+              <Box mb={2}>
                 <Text
                   fontSize="xs"
                   textTransform="uppercase"
@@ -341,7 +325,7 @@ const Login = () => {
                   Bienvenido de vuelta
                 </Text>
                 <Text
-                  fontSize={{ base: "3xl", md: "4xl" }}
+                  fontSize={{ base: "2xl", md: "4xl" }}
                   fontWeight="extrabold"
                   color={p.fg}
                   lineHeight="1"
@@ -370,12 +354,7 @@ const Login = () => {
               </Box>
 
               <Box>
-                <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  mb={3}
-                >
+                <Box display="flex" justifyContent="space-between" mb={3}>
                   <Text
                     fontSize="xs"
                     textTransform="uppercase"
@@ -389,7 +368,6 @@ const Login = () => {
                     color={p.muted}
                     cursor="pointer"
                     _hover={{ color: p.fg }}
-                    transition="color 0.2s"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? "Ocultar" : "Mostrar"}
@@ -410,7 +388,6 @@ const Login = () => {
                 color={p.muted}
                 cursor="pointer"
                 _hover={{ color: p.fg }}
-                transition="color 0.2s"
                 textAlign="right"
                 mt={-2}
               >
@@ -433,14 +410,13 @@ const Login = () => {
                 alignItems="center"
                 justifyContent="center"
                 transition="all 0.2s"
-                _hover={{ opacity: 0.85, transform: "translateY(-1px)" }}
-                _active={{ transform: "translateY(0)" }}
+                _hover={{ opacity: 0.85 }}
                 onClick={handleLogin}
                 opacity={isLoading ? 0.7 : 1}
                 cursor={isLoading ? "not-allowed" : "pointer"}
               >
                 {isLoading ? (
-                  <Box display="flex" gap={1} alignItems="center">
+                  <Box display="flex" gap={1}>
                     {[0, 1, 2].map((i) => (
                       <Box
                         key={i}
@@ -487,7 +463,7 @@ const Login = () => {
                 textTransform="uppercase"
                 borderRadius="sm"
                 transition="all 0.2s"
-                _hover={{ borderColor: p.fg, transform: "translateY(-1px)" }}
+                _hover={{ borderColor: p.fg }}
                 onClick={() => setMode("register")}
               >
                 Crear cuenta
@@ -513,14 +489,13 @@ const Login = () => {
                     key={u}
                     display="flex"
                     justifyContent="space-between"
-                    alignItems="center"
                     py={1}
                     cursor="pointer"
+                    role="group"
                     onClick={() => {
                       setUsername(u);
                       setPassword(pw);
                     }}
-                    role="group"
                   >
                     <Text
                       fontSize="xs"
@@ -547,7 +522,7 @@ const Login = () => {
           )}
 
           {mode === "register" && (
-            <Box display="flex" flexDir="column" gap={5}>
+            <Box display="flex" flexDir="column" gap={4}>
               <Box mb={2}>
                 <Text
                   fontSize="xs"
@@ -559,7 +534,7 @@ const Login = () => {
                   Únete ahora
                 </Text>
                 <Text
-                  fontSize={{ base: "3xl", md: "4xl" }}
+                  fontSize={{ base: "2xl", md: "4xl" }}
                   fontWeight="extrabold"
                   color={p.fg}
                   lineHeight="1"
@@ -568,60 +543,48 @@ const Login = () => {
                 </Text>
               </Box>
 
-              <Box>
-                <Text
-                  fontSize="xs"
-                  textTransform="uppercase"
-                  letterSpacing="widest"
-                  color={p.muted}
-                  mb={3}
-                >
-                  Nombre completo
-                </Text>
-                <Input
-                  {...inputProps}
-                  placeholder="John Doe"
-                  value={regName}
-                  onChange={(e) => setRegName(e.target.value)}
-                />
-              </Box>
-
-              <Box>
-                <Text
-                  fontSize="xs"
-                  textTransform="uppercase"
-                  letterSpacing="widest"
-                  color={p.muted}
-                  mb={3}
-                >
-                  Correo electrónico
-                </Text>
-                <Input
-                  {...inputProps}
-                  type="email"
-                  placeholder="john@email.com"
-                  value={regEmail}
-                  onChange={(e) => setRegEmail(e.target.value)}
-                />
-              </Box>
-
-              <Box>
-                <Text
-                  fontSize="xs"
-                  textTransform="uppercase"
-                  letterSpacing="widest"
-                  color={p.muted}
-                  mb={3}
-                >
-                  Usuario
-                </Text>
-                <Input
-                  {...inputProps}
-                  placeholder="Elige un usuario"
-                  value={regUser}
-                  onChange={(e) => setRegUser(e.target.value)}
-                />
-              </Box>
+              {[
+                {
+                  label: "Nombre completo",
+                  val: regName,
+                  set: setRegName,
+                  placeholder: "John Doe",
+                  type: "text",
+                },
+                {
+                  label: "Correo electrónico",
+                  val: regEmail,
+                  set: setRegEmail,
+                  placeholder: "john@email.com",
+                  type: "email",
+                },
+                {
+                  label: "Usuario",
+                  val: regUser,
+                  set: setRegUser,
+                  placeholder: "Elige un usuario",
+                  type: "text",
+                },
+              ].map(({ label, val, set, placeholder, type }) => (
+                <Box key={label}>
+                  <Text
+                    fontSize="xs"
+                    textTransform="uppercase"
+                    letterSpacing="widest"
+                    color={p.muted}
+                    mb={3}
+                  >
+                    {label}
+                  </Text>
+                  <Input
+                    {...inputProps}
+                    type={type}
+                    placeholder={placeholder}
+                    value={val}
+                    onChange={(e) => set(e.target.value)}
+                  />
+                </Box>
+              ))}
 
               <Box>
                 <Box display="flex" justifyContent="space-between" mb={3}>
@@ -638,7 +601,6 @@ const Login = () => {
                     color={p.muted}
                     cursor="pointer"
                     _hover={{ color: p.fg }}
-                    transition="color 0.2s"
                     onClick={() => setShowRegPass(!showRegPass)}
                   >
                     {showRegPass ? "Ocultar" : "Mostrar"}
@@ -668,10 +630,10 @@ const Login = () => {
                   type={showRegPass ? "text" : "password"}
                   placeholder="Repite tu contraseña"
                   value={regConfirm}
-                  onChange={(e) => setRegConfirm(e.target.value)}
                   borderColor={
                     regConfirm && regConfirm !== regPass ? "red.400" : p.border
                   }
+                  onChange={(e) => setRegConfirm(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleRegister()}
                 />
                 {regConfirm && regConfirm !== regPass && (
@@ -698,14 +660,13 @@ const Login = () => {
                 alignItems="center"
                 justifyContent="center"
                 transition="all 0.2s"
-                _hover={{ opacity: 0.85, transform: "translateY(-1px)" }}
-                _active={{ transform: "translateY(0)" }}
+                _hover={{ opacity: 0.85 }}
                 onClick={handleRegister}
                 opacity={isLoading ? 0.7 : 1}
                 cursor={isLoading ? "not-allowed" : "pointer"}
               >
                 {isLoading ? (
-                  <Box display="flex" gap={1} alignItems="center">
+                  <Box display="flex" gap={1}>
                     {[0, 1, 2].map((i) => (
                       <Box
                         key={i}

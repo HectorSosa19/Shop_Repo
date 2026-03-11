@@ -1,16 +1,16 @@
-import { Box, Text, List, ListItem } from "@chakra-ui/react";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { Box, HStack, Text } from "@chakra-ui/react";
+import { useTheme } from "@/context/ThemeContext";
+import { CiSearch, CiUser, CiShoppingCart } from "react-icons/ci";
+import { RiCloseLine } from "react-icons/ri";
+import { keyframes } from "@emotion/react";
+import styles from "./navbar.module.css";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FaUserAstronaut } from "react-icons/fa";
-import { CiShoppingCart, CiSearch } from "react-icons/ci";
-import { keyframes } from "@emotion/react";
-import { useTheme } from "@/context/ThemeContext";
-import styles from "@/components/navbar/navbar.module.css";
 
-const marqueeAnimation = keyframes`
-  from { transform: translateX(100vw); }
-  to { transform: translateX(-100%); }
+const marqueeAnim = keyframes`
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 `;
 
 const SHOP_CATEGORIES = [
@@ -22,6 +22,7 @@ const SHOP_CATEGORIES = [
 ];
 
 const NAV_LINKS = [
+  { label: "SHOP", href: "/products", hasDropdown: true },
   { label: "MEN'S CLOTHING", href: "/new" },
   { label: "WOMEN'S CLOTHING", href: "/women" },
   { label: "ELECTRONICS", href: "/electronics" },
@@ -29,411 +30,620 @@ const NAV_LINKS = [
   { label: "TOP SELLER", href: "/sale" },
 ];
 
-const NavBar = () => {
+const MARQUEE_TEXT = [
+  "+ FREE SHIPPING ON YOUR FIRST ORDER",
+  "+ NEW ARRIVALS EVERY WEEK",
+  "+ RETURNS WITHIN 30 DAYS",
+  "+ SECURE PAYMENT",
+];
+
+export const NavBar = () => {
+  const { palette: p, dark, toggleTheme, cartCount } = useTheme();
   const router = useRouter();
-  const { dark, toggleTheme, cartCount } = useTheme();
   const [scrolled, setScrolled] = useState(false);
-  const [searchFocused, setSearchFocused] = useState(false);
   const [shopOpen, setShopOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileShopOpen, setMobileShopOpen] = useState(false);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const shopRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
-        setShopOpen(false);
-      }
+    if (searchOpen) searchRef.current?.focus();
+  }, [searchOpen]);
+
+  useEffect(() => {
+    if (mobileOpen) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
+    return () => {
+      document.body.style.overflow = "";
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [mobileOpen]);
 
-  const bg = dark ? "black" : "white";
-  const fg = dark ? "white" : "black";
-  const muted = dark ? "whiteAlpha.400" : "gray.400";
-  const border = dark ? "whiteAlpha.200" : "gray.200";
-  const borderActive = dark ? "white" : "black";
-  const inputBg = dark ? "blackAlpha.400" : "white";
-  const marqueeBg = dark ? "white" : "black";
-  const marqueeText = dark ? "black" : "white";
-  const iconHoverBg = dark ? "white" : "black";
-  const iconHoverColor = dark ? "black" : "white";
-  const dropdownBg = dark ? "#0a0a0a" : "white";
-  const dropdownBorder = dark ? "whiteAlpha.100" : "gray.100";
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileOpen(false);
+    setShopOpen(false);
+  }, [router.pathname]);
 
-  const isShopActive = SHOP_CATEGORIES.some((c) => router.pathname === c.href);
+  const isActive = (href: string) => router.pathname === href;
 
   return (
-    <Box position="sticky" top={0} zIndex={100} fontFamily="mono">
+    <>
       <Box
-        bg={marqueeBg}
+        w="100%"
+        bg={dark ? "white" : "black"}
+        py={2}
         overflow="hidden"
-        py="6px"
-        whiteSpace="nowrap"
         transition="background 0.4s"
       >
-        <Text
-          display="inline-block"
-          fontSize="11px"
-          color={marqueeText}
-          letterSpacing="widest"
-          textTransform="uppercase"
-          animation={`${marqueeAnimation} 18s linear infinite`}
-          transition="color 0.4s"
+        <Box
+          display="flex"
+          animation={`${marqueeAnim} 28s linear infinite`}
+          whiteSpace="nowrap"
+          w="max-content"
         >
-          ✦ Free Shipping on your First Order &nbsp;&nbsp;&nbsp;&nbsp; ✦ New
-          Arrivals Every Week &nbsp;&nbsp;&nbsp;&nbsp; ✦ Returns within 30 Days
-          &nbsp;&nbsp;&nbsp;&nbsp; ✦ Secure Payment &nbsp;&nbsp;&nbsp;&nbsp;
-        </Text>
+          {[...MARQUEE_TEXT, ...MARQUEE_TEXT].map((t, i) => (
+            <Text
+              key={i}
+              fontSize="10px"
+              letterSpacing="widest"
+              textTransform="uppercase"
+              color={dark ? "black" : "white"}
+              fontFamily="mono"
+              px={8}
+            >
+              {t}
+            </Text>
+          ))}
+        </Box>
       </Box>
 
       <Box
-        display="flex"
-        flexDirection="row"
-        justifyContent="space-between"
-        alignItems="center"
-        px={{ base: 6, md: 16 }}
-        py="14px"
-        bg={bg}
+        w="100%"
+        position="sticky"
+        top={0}
+        zIndex={100}
+        bg={p.bg}
         borderBottom="1px solid"
-        borderColor={scrolled ? borderActive : border}
-        transition="all 0.4s"
+        borderColor={scrolled ? p.fg : p.border}
         boxShadow={scrolled ? "0 2px 20px rgba(0,0,0,0.08)" : "none"}
+        transition="all 0.3s"
       >
-        <Link href="/" passHref>
-          <Text
-            className={styles.title}
-            fontSize="38px"
-            color={fg}
-            fontWeight="normal"
-            letterSpacing="-1px"
-            cursor="pointer"
-            transition="all 0.4s"
-            userSelect="none"
-            _hover={{ letterSpacing: "1px" }}
-          >
-            Ellie-Jane
-          </Text>
-        </Link>
-
-        <List display="flex" flexDirection="row" gap="36px" alignItems="center">
-          <ListItem>
+        <HStack
+          px={{ base: 4, md: 8, lg: 12 }}
+          h={{ base: "60px", md: "72px" }}
+          justify="space-between"
+          align="center"
+        >
+          <Link href="/" passHref>
             <Box
-              ref={dropdownRef}
-              position="relative"
-              onMouseEnter={() => setShopOpen(true)}
-              onMouseLeave={() => setShopOpen(false)}
+              display="flex"
+              alignItems="baseline"
+              gap={0}
+              cursor="pointer"
+              flexShrink={0}
             >
-              <Box
-                display="flex"
-                alignItems="center"
-                gap="4px"
-                cursor="pointer"
-                position="relative"
+              <Text
+                className={styles.title}
+                fontSize={{ base: "28px", md: "36px" }}
+                color={p.fg}
+                transition="color 0.4s"
+                lineHeight="1"
               >
-                <Text
-                  fontSize="11px"
-                  fontWeight={isShopActive ? "bold" : "normal"}
-                  color={isShopActive || shopOpen ? fg : muted}
-                  letterSpacing="widest"
-                  textTransform="uppercase"
-                  transition="color 0.2s"
-                >
-                  SHOP
-                </Text>
-                <Text
-                  fontSize="8px"
-                  color={isShopActive || shopOpen ? fg : muted}
-                  transition="all 0.2s"
-                  transform={shopOpen ? "rotate(180deg)" : "rotate(0deg)"}
-                  lineHeight="1"
-                  mt="1px"
-                >
-                  ▾
-                </Text>
-                <Box
-                  position="absolute"
-                  bottom="-3px"
-                  left={0}
-                  h="1px"
-                  bg={fg}
-                  transition="width 0.25s"
-                  w={isShopActive ? "100%" : "0%"}
-                />
-              </Box>
-
-              <Box
-                position="absolute"
-                top="100%"
-                left="-20px"
-                right="-20px"
-                h="20px"
-                display={shopOpen ? "block" : "none"}
-              />
-
-              <Box
-                position="absolute"
-                top="calc(100% + 16px)"
-                left="50%"
-                transform="translateX(-50%)"
-                w="200px"
-                bg={dropdownBg}
-                border="1px solid"
-                borderColor={dropdownBorder}
-                py={2}
-                opacity={shopOpen ? 1 : 0}
-                pointerEvents={shopOpen ? "auto" : "none"}
-                transition="opacity 0.2s"
-                boxShadow={
-                  dark
-                    ? "0 8px 30px rgba(255,255,255,0.05)"
-                    : "0 8px 30px rgba(0,0,0,0.08)"
-                }
-                zIndex={200}
+                Ellie
+              </Text>
+              <Text
+                className={styles.title}
+                fontSize={{ base: "28px", md: "36px" }}
+                color={p.muted}
+                transition="color 0.4s"
+                lineHeight="1"
               >
-                <Box
-                  position="absolute"
-                  top="-5px"
-                  left="50%"
-                  transform="translateX(-50%) rotate(45deg)"
-                  w="9px"
-                  h="9px"
-                  bg={dropdownBg}
-                  border="1px solid"
-                  borderColor={dropdownBorder}
-                  borderBottom="none"
-                  borderRight="none"
-                />
-
-                {SHOP_CATEGORIES.map(({ label, href }) => {
-                  const isActive = router.pathname === href;
-                  return (
-                    <Link key={href} href={href} passHref>
-                      <Box
-                        px={5}
-                        py="10px"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="space-between"
-                        cursor="pointer"
-                        onClick={() => setShopOpen(false)}
-                        bg={
-                          isActive
-                            ? dark
-                              ? "whiteAlpha.100"
-                              : "gray.50"
-                            : "transparent"
-                        }
-                        transition="background 0.15s"
-                        _hover={{ bg: dark ? "whiteAlpha.100" : "gray.50" }}
-                        role="group"
-                      >
-                        <Text
-                          fontSize="11px"
-                          letterSpacing="widest"
-                          textTransform="uppercase"
-                          color={isActive ? fg : muted}
-                          fontWeight={isActive ? "bold" : "normal"}
-                          transition="color 0.15s"
-                          _groupHover={{ color: fg }}
-                        >
-                          {label}
-                        </Text>
-                        {isActive && (
-                          <Box w="4px" h="4px" borderRadius="full" bg={fg} />
-                        )}
-                      </Box>
-                    </Link>
-                  );
-                })}
-              </Box>
+                -Jane
+              </Text>
             </Box>
-          </ListItem>
+          </Link>
 
-          {NAV_LINKS.map(({ label, href }) => {
-            const isActive = router.pathname === href;
-            return (
-              <ListItem key={href}>
-                <Link href={href} passHref>
-                  <Box
-                    position="relative"
-                    display="inline-block"
-                    cursor="pointer"
-                  >
+          <HStack spacing={6} display={{ base: "none", xl: "flex" }}>
+            {NAV_LINKS.map((link) =>
+              link.hasDropdown ? (
+                <Box
+                  key={link.label}
+                  position="relative"
+                  ref={shopRef}
+                  onMouseEnter={() => setShopOpen(true)}
+                  onMouseLeave={() => setShopOpen(false)}
+                >
+                  <HStack spacing={1} cursor="pointer">
                     <Text
                       fontSize="11px"
-                      fontWeight={isActive ? "bold" : "normal"}
-                      color={isActive ? fg : muted}
+                      fontFamily="mono"
+                      fontWeight="bold"
                       letterSpacing="widest"
+                      color={isActive(link.href) ? p.fg : p.muted}
+                      _hover={{ color: p.fg }}
+                      transition="color 0.2s"
                       textTransform="uppercase"
-                      transition="color 0.3s"
-                      _hover={{ color: fg }}
                     >
-                      {label}
+                      {link.label}
                     </Text>
+                    <Text fontSize="9px" color={p.muted}>
+                      ▾
+                    </Text>
+                  </HStack>
+                  {shopOpen && (
                     <Box
                       position="absolute"
-                      bottom="-3px"
+                      top="100%"
                       left={0}
-                      h="1px"
-                      bg={fg}
-                      transition="width 0.25s"
-                      w={isActive ? "100%" : "0%"}
+                      w="200px"
+                      h="12px"
                     />
+                  )}
+                  {shopOpen && (
+                    <Box
+                      position="absolute"
+                      top="calc(100% + 12px)"
+                      left={0}
+                      bg={p.bg}
+                      border="1px solid"
+                      borderColor={p.fg}
+                      minW="180px"
+                      zIndex={200}
+                      py={2}
+                    >
+                      {SHOP_CATEGORIES.map((cat) => (
+                        <Link key={cat.href} href={cat.href} passHref>
+                          <Box
+                            px={4}
+                            py={3}
+                            cursor="pointer"
+                            _hover={{ bg: p.cardBg }}
+                            transition="background 0.15s"
+                          >
+                            <Text
+                              fontSize="10px"
+                              fontFamily="mono"
+                              letterSpacing="widest"
+                              textTransform="uppercase"
+                              color={p.fg}
+                            >
+                              {cat.label}
+                            </Text>
+                          </Box>
+                        </Link>
+                      ))}
+                    </Box>
+                  )}
+                </Box>
+              ) : (
+                <Link key={link.label} href={link.href} passHref>
+                  <Box position="relative" cursor="pointer">
+                    <Text
+                      fontSize="11px"
+                      fontFamily="mono"
+                      fontWeight="bold"
+                      letterSpacing="widest"
+                      color={isActive(link.href) ? p.fg : p.muted}
+                      _hover={{ color: p.fg }}
+                      transition="color 0.2s"
+                      textTransform="uppercase"
+                    >
+                      {link.label}
+                    </Text>
+                    {isActive(link.href) && (
+                      <Box
+                        position="absolute"
+                        bottom="-4px"
+                        left={0}
+                        right={0}
+                        h="1.5px"
+                        bg={p.fg}
+                      />
+                    )}
                   </Box>
                 </Link>
-              </ListItem>
-            );
-          })}
-        </List>
+              ),
+            )}
+          </HStack>
 
-        <Box display="flex" alignItems="center" gap="16px">
-          <Box w="1px" h="20px" bg={border} transition="background 0.4s" />
-
-          <Link href="/login" passHref>
+          <HStack spacing={{ base: 3, md: 4 }} align="center">
             <Box
-              as="button"
+              position="relative"
+              display={{ base: "none", md: "flex" }}
+              alignItems="center"
+            >
+              <Box
+                as={CiSearch}
+                w="20px"
+                h="20px"
+                color={p.muted}
+                cursor="pointer"
+                _hover={{ color: p.fg }}
+                transition="color 0.2s"
+                onClick={() => setSearchOpen(!searchOpen)}
+                flexShrink={0}
+              />
+              <Box
+                as="input"
+                ref={searchRef}
+                placeholder="Buscar..."
+                w={searchOpen ? "160px" : "0px"}
+                ml={searchOpen ? 2 : 0}
+                opacity={searchOpen ? 1 : 0}
+                overflow="hidden"
+                transition="all 0.3s"
+                border="none"
+                borderBottom="1px solid"
+                borderColor={p.fg}
+                bg="transparent"
+                color={p.fg}
+                fontFamily="mono"
+                fontSize="11px"
+                outline="none"
+                px={1}
+                py={0.5}
+                _placeholder={{ color: p.muted }}
+              />
+            </Box>
+
+            <Link href="/login" passHref>
+              <Box
+                as={CiUser}
+                w="22px"
+                h="22px"
+                color={p.muted}
+                cursor="pointer"
+                _hover={{ color: p.fg }}
+                transition="color 0.2s"
+              />
+            </Link>
+
+            <Link href="/cart" passHref>
+              <Box position="relative" cursor="pointer">
+                <Box
+                  as={CiShoppingCart}
+                  w="22px"
+                  h="22px"
+                  color={p.muted}
+                  _hover={{ color: p.fg }}
+                  transition="color 0.2s"
+                />
+                {cartCount > 0 && (
+                  <Box
+                    position="absolute"
+                    top="-6px"
+                    right="-6px"
+                    bg={p.fg}
+                    color={p.bg}
+                    w="16px"
+                    h="16px"
+                    borderRadius="full"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    fontSize="8px"
+                    fontWeight="bold"
+                    fontFamily="mono"
+                  >
+                    {cartCount}
+                  </Box>
+                )}
+              </Box>
+            </Link>
+
+            <Box
               display="flex"
               alignItems="center"
-              justifyContent="center"
-              w="34px"
-              h="34px"
-              borderRadius="full"
+              gap={1}
+              cursor="pointer"
+              onClick={toggleTheme}
               border="1px solid"
-              borderColor={border}
-              color={muted}
+              borderColor={p.border}
+              borderRadius="full"
+              px={2}
+              py={1}
               transition="all 0.2s"
-              _hover={{
-                borderColor: borderActive,
-                bg: iconHoverBg,
-                color: iconHoverColor,
-              }}
+              _hover={{ borderColor: p.fg }}
+              flexShrink={0}
             >
-              <FaUserAstronaut size={14} />
-            </Box>
-          </Link>
-          <Link href="/cart" passHref>
-            <Box position="relative">
+              <Text
+                fontSize="9px"
+                fontFamily="mono"
+                color={p.muted}
+                display={{ base: "none", sm: "block" }}
+              >
+                {dark ? "WH" : "BK"}
+              </Text>
               <Box
-                as="button"
-                onClick={() => router.push("/cart")}
+                w="18px"
+                h="18px"
+                borderRadius="full"
+                bg={p.fg}
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
-                w="34px"
-                h="34px"
-                borderRadius="full"
-                border="1px solid"
-                borderColor={border}
-                color={muted}
-                transition="all 0.2s"
-                _hover={{
-                  borderColor: borderActive,
-                  bg: iconHoverBg,
-                  color: iconHoverColor,
-                }}
+                fontSize="10px"
               >
-                <CiShoppingCart size={18} />
-              </Box>
-              <Box
-                position="absolute"
-                top="-4px"
-                right="-4px"
-                w="14px"
-                h="14px"
-                bg={fg}
-                borderRadius="full"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                transition="background 0.4s"
-              >
-                <Text
-                  fontSize="8px"
-                  color={bg}
-                  fontWeight="bold"
-                  lineHeight="1"
-                  transition="color 0.4s"
-                >
-                  {cartCount}
-                </Text>
+                {dark ? "☀️" : "🌙"}
               </Box>
             </Box>
-          </Link>
 
-          <Box w="1px" h="20px" bg={border} transition="background 0.4s" />
+            <Box
+              display={{ base: "flex", xl: "none" }}
+              flexDir="column"
+              gap="5px"
+              cursor="pointer"
+              p={1}
+              onClick={() => setMobileOpen(true)}
+              flexShrink={0}
+            >
+              <Box w="22px" h="1.5px" bg={p.fg} transition="all 0.2s" />
+              <Box w="16px" h="1.5px" bg={p.fg} transition="all 0.2s" />
+              <Box w="22px" h="1.5px" bg={p.fg} transition="all 0.2s" />
+            </Box>
+          </HStack>
+        </HStack>
+      </Box>
+
+      {mobileOpen && (
+        <Box
+          position="fixed"
+          inset={0}
+          zIndex={999}
+          display={{ base: "flex", xl: "none" }}
+        >
+          <Box
+            position="absolute"
+            inset={0}
+            bg="blackAlpha.600"
+            onClick={() => setMobileOpen(false)}
+          />
 
           <Box
-            as="button"
-            onClick={toggleTheme}
+            position="absolute"
+            top={0}
+            right={0}
+            w={{ base: "100%", sm: "360px" }}
+            h="100vh"
+            bg={p.bg}
             display="flex"
-            alignItems="center"
-            w="52px"
-            h="28px"
-            borderRadius="full"
-            border="1.5px solid"
-            borderColor={borderActive}
-            bg={dark ? "white" : "black"}
-            px="3px"
-            position="relative"
-            transition="all 0.35s"
-            cursor="pointer"
-            flexShrink={0}
+            flexDir="column"
+            overflowY="auto"
+            zIndex={1000}
           >
-            <Text
-              position="absolute"
-              left="7px"
-              fontSize="7px"
-              fontWeight="bold"
-              letterSpacing="wider"
-              color={dark ? "black" : "transparent"}
-              transition="color 0.3s"
-              userSelect="none"
+            <HStack
+              justify="space-between"
+              px={6}
+              py={5}
+              borderBottom="1px solid"
+              borderColor={p.border}
             >
-              BK
-            </Text>
-            <Text
-              position="absolute"
-              right="6px"
-              fontSize="7px"
-              fontWeight="bold"
-              letterSpacing="wider"
-              color={dark ? "transparent" : "white"}
-              transition="color 0.3s"
-              userSelect="none"
-            >
-              WH
-            </Text>
-            <Box
-              w="20px"
-              h="20px"
-              borderRadius="full"
-              bg={dark ? "black" : "white"}
-              border="1px solid"
-              borderColor={dark ? "whiteAlpha.300" : "blackAlpha.200"}
-              position="absolute"
-              left={dark ? "calc(100% - 23px)" : "3px"}
-              transition="left 0.3s cubic-bezier(0.4,0,0.2,1), background 0.35s"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Text fontSize="9px" lineHeight="1" userSelect="none">
-                {dark ? "🌙" : "☀️"}
+              <Box display="flex" alignItems="baseline" gap={0}>
+                <Text
+                  className={styles.title}
+                  fontSize="28px"
+                  color={p.fg}
+                  lineHeight="1"
+                >
+                  Ellie
+                </Text>
+                <Text
+                  className={styles.title}
+                  fontSize="28px"
+                  color={p.muted}
+                  lineHeight="1"
+                >
+                  -Jane
+                </Text>
+              </Box>
+              <Box
+                as={RiCloseLine}
+                w="24px"
+                h="24px"
+                color={p.fg}
+                cursor="pointer"
+                onClick={() => setMobileOpen(false)}
+                _hover={{ opacity: 0.7 }}
+              />
+            </HStack>
+
+            <Box px={6} py={4} borderBottom="1px solid" borderColor={p.border}>
+              <Box
+                display="flex"
+                alignItems="center"
+                gap={3}
+                border="1px solid"
+                borderColor={p.border}
+                px={4}
+                py={3}
+                borderRadius="sm"
+              >
+                <Box
+                  as={CiSearch}
+                  w="18px"
+                  h="18px"
+                  color={p.muted}
+                  flexShrink={0}
+                />
+                <Box
+                  as="input"
+                  placeholder="Buscar productos..."
+                  flex="1"
+                  bg="transparent"
+                  border="none"
+                  outline="none"
+                  color={p.fg}
+                  fontFamily="mono"
+                  fontSize="13px"
+                  _placeholder={{ color: p.muted }}
+                />
+              </Box>
+            </Box>
+
+            <Box flex="1" px={6} py={4}>
+              <Text
+                fontSize="9px"
+                textTransform="uppercase"
+                letterSpacing="widest"
+                color={p.muted}
+                mb={4}
+              >
+                Menú
               </Text>
+
+              <Box mb={1}>
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  py={4}
+                  cursor="pointer"
+                  borderBottom="1px solid"
+                  borderColor={p.border}
+                  onClick={() => setMobileShopOpen(!mobileShopOpen)}
+                >
+                  <Text
+                    fontSize="13px"
+                    fontFamily="mono"
+                    fontWeight="bold"
+                    letterSpacing="widest"
+                    textTransform="uppercase"
+                    color={p.fg}
+                  >
+                    Shop
+                  </Text>
+                  <Text
+                    fontSize="12px"
+                    color={p.muted}
+                    transition="transform 0.2s"
+                    transform={mobileShopOpen ? "rotate(180deg)" : "none"}
+                  >
+                    ▾
+                  </Text>
+                </Box>
+                {mobileShopOpen && (
+                  <Box
+                    pl={4}
+                    py={2}
+                    borderBottom="1px solid"
+                    borderColor={p.border}
+                  >
+                    {SHOP_CATEGORIES.map((cat) => (
+                      <Link key={cat.href} href={cat.href} passHref>
+                        <Box py={3} cursor="pointer" _hover={{ opacity: 0.7 }}>
+                          <Text
+                            fontSize="12px"
+                            fontFamily="mono"
+                            letterSpacing="wider"
+                            textTransform="uppercase"
+                            color={p.muted}
+                          >
+                            {cat.label}
+                          </Text>
+                        </Box>
+                      </Link>
+                    ))}
+                  </Box>
+                )}
+              </Box>
+
+              {NAV_LINKS.filter((l) => !l.hasDropdown).map((link) => (
+                <Link key={link.label} href={link.href} passHref>
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    py={4}
+                    cursor="pointer"
+                    borderBottom="1px solid"
+                    borderColor={p.border}
+                    _hover={{ opacity: 0.7 }}
+                  >
+                    <Text
+                      fontSize="13px"
+                      fontFamily="mono"
+                      fontWeight="bold"
+                      letterSpacing="widest"
+                      textTransform="uppercase"
+                      color={isActive(link.href) ? p.fg : p.muted}
+                    >
+                      {link.label}
+                    </Text>
+                    {isActive(link.href) && (
+                      <Box w="6px" h="6px" borderRadius="full" bg={p.fg} />
+                    )}
+                  </Box>
+                </Link>
+              ))}
+            </Box>
+
+            <Box px={6} py={6} borderTop="1px solid" borderColor={p.border}>
+              <HStack spacing={4}>
+                <Link href="/login" passHref>
+                  <Box
+                    flex="1"
+                    h="44px"
+                    border="1px solid"
+                    borderColor={p.border}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    cursor="pointer"
+                    _hover={{ borderColor: p.fg }}
+                    transition="all 0.2s"
+                  >
+                    <Text
+                      fontSize="10px"
+                      fontFamily="mono"
+                      fontWeight="bold"
+                      letterSpacing="widest"
+                      textTransform="uppercase"
+                      color={p.fg}
+                    >
+                      Iniciar sesión
+                    </Text>
+                  </Box>
+                </Link>
+                <Link href="/cart" passHref>
+                  <Box
+                    flex="1"
+                    h="44px"
+                    bg={p.fg}
+                    color={p.bg}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    gap={2}
+                    cursor="pointer"
+                    _hover={{ opacity: 0.85 }}
+                    transition="all 0.2s"
+                  >
+                    <Box as={CiShoppingCart} w="18px" h="18px" />
+                    <Text
+                      fontSize="10px"
+                      fontFamily="mono"
+                      fontWeight="bold"
+                      letterSpacing="widest"
+                      textTransform="uppercase"
+                    >
+                      Carrito {cartCount > 0 && `(${cartCount})`}
+                    </Text>
+                  </Box>
+                </Link>
+              </HStack>
             </Box>
           </Box>
         </Box>
-      </Box>
-    </Box>
+      )}
+    </>
   );
 };
 
