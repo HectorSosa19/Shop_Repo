@@ -29,7 +29,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { ReactElement, useEffect, useState } from "react";
-import { RiSlidersHLine } from "react-icons/ri";
+import { RiEqualizerLine } from "react-icons/ri";
 
 const SORT_OPTIONS = [
   { label: "Relevancia", value: "default" },
@@ -245,6 +245,7 @@ const NewClothes = () => {
   return (
     <>
       <Box minH="100vh" bg={p.bg} fontFamily="mono" transition="all 0.4s">
+        {/* Header */}
         <Box
           px={{ base: 4, md: 8, lg: 16 }}
           pt={{ base: 8, md: 14 }}
@@ -278,6 +279,7 @@ const NewClothes = () => {
               >
                 {filteredData.length} productos
               </Text>
+              {/* Mobile filter button */}
               <Box
                 display={{ base: "flex", lg: "none" }}
                 alignItems="center"
@@ -291,7 +293,7 @@ const NewClothes = () => {
                 transition="all 0.2s"
                 onClick={onOpen}
               >
-                <Box as={RiSlidersHLine} w="14px" h="14px" color={p.fg} />
+                <Box as={RiEqualizerLine} w="14px" h="14px" color={p.fg} />
                 <Text
                   fontSize="10px"
                   fontFamily="mono"
@@ -318,6 +320,7 @@ const NewClothes = () => {
           gap={10}
           alignItems="flex-start"
         >
+          {/* Desktop sticky filters */}
           <Box
             w="220px"
             flexShrink={0}
@@ -350,6 +353,7 @@ const NewClothes = () => {
             />
           </Box>
 
+          {/* Grid */}
           <Box flex="1" minW={0}>
             {loading ? (
               <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} spacing={0}>
@@ -516,6 +520,7 @@ const NewClothes = () => {
         </Box>
       </Box>
 
+      {/* Mobile filter drawer */}
       <Drawer isOpen={isOpen} placement="bottom" onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent bg={p.bg} borderTopRadius="xl" maxH="80vh">
